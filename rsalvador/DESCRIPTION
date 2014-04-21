@@ -1,0 +1,16 @@
+Package: rsalvador
+Version: 1.0
+Date: 2014-04-20
+Title: rSalvador: An R Tool for the Luria-Delbruck Fluctuation Assay
+Author: Qi Zheng <qzheng@sph.tamhsc.edu>
+Maintainer: Qi Zheng <qzheng@sph.tamhsc.edu>
+Depends: R (>= 2.15.0), hypergeo, gdata
+Description: Routines for inferring microbial mutation rates from fluctuation assay
+  data. rSalvador can compute maximum likelihood estimates and likelihood ratio-based
+  confidence intervals, adjusting for plating efficiency when necessary. In addition
+  to the more commonly used Lea-Coulson mutation model, rSalvador can accommodate
+  Haldane's discrete-time mutation model. Furthermore, rSalvador can compute mutant
+  cell distribution functions, plot log-likelihood functions and simulate fluctuation
+  experiments.
+LazyData: yes
+License: GPL (>= 2)
