@@ -10,9 +10,27 @@ R CMD check rsalvador
 R CMD INSTALL rsalvador
 ```
 
+Building on Windows - Environment Preparation
+---------------------------------------------
+Download and install R, rtools, Strawberry Perl, and MiKTeX. Strawberry Perl,
+MiKTeX, and rtools will automatically add themselves to the PATH, but you will
+need to add R manually.
+
+Open a R prompt, and install the hypergeo and gdata packages.
+```
+install.packages('hypergeo')
+install.packages('gdata')
+```
+
+Now you are ready to build (see below).
+
 Building an installable archive
 -------------------------------
 ```
 R CMD check rsalvador
 R CMD INSTALL --build rsalvador
 ```
+
+Author
+------
+Qi Zheng
