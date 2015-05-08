@@ -2,6 +2,7 @@
 # Qi Zheng, Department of epidemiology and Biostatistics
 # Texas A&M School of Public Health
 # Version 1.0: April 20, 2014
+# Version 1.1: April 19, 2015
 
 # ----------- July 9, 2013, first successful calling C from R for Salvador
 # ----------- Version 0.2 started December 22, 2013
@@ -1076,3 +1077,71 @@ abline(v=mle, col=mle.col)
 if (show.secant) abline(h=max.mu, lty=2)
 
 }
+
+
+### ------------ comparison of mutation rates -----------------
+
+
+# Likelihood ratio test, rewritten my Mathematica code (2008) in R, April 13, 2014
+# revision, April 22, 2014
+# revision, April 19, 2015
+
+# ---------- it assumes a common Nt, and hence a common phi parameter, April 19, 2015
+
+compare.LD=function(x1,x2,init.m0=0,init.m1=0,init.m2=0,phi=1){
+m1=newton.LD(x1,phi,init.m=init.m1)
+m2=newton.LD(x2,phi,init.m=init.m2)
+down=likely2(x1,x2,m1,m2,phi)
+y=unlist(c(x1,x2))
+m0=newton.LD(y,phi,init.m=init.m0)
+up=likely1(y,m0,phi)
+chi=-2*(up-down)
+pval=1-pchisq(chi,1)
+return(c(chi,pval))
+}
+
+# ----- for compare.LD
+
+likely2=function(x1,x2,m1,m2,phi=1) {
+n1=max(x1)
+n2=max(x2)
+p1=prob.LD(m1,phi,n1)
+p1=sum(log(p1[x1 +1]))
+p2=prob.LD(m2,phi,n2)
+p2=sum(log(p2[x2 +1]))
+return(p1+p2)
+}
+
+# ----- for compare.LD
+
+likely1=function(x,m,phi=1) {
+n=max(x)
+p=prob.LD(m,phi,n)
+p=sum( log(p[x+1]) )
+return(p)
+}
+
+### ------ simulation under the Bartlett model, added April 19, 2015 ----
+
+# March 14, 2015, modified April 19, 2015
+
+simu.Bartlett=function(b1,b2,mu,N0,T,max.events=1e10,show.growth=FALSE)
+{
+      wild = N0
+       mutants = 0 
+      events = 0
+      timeNow=0
+      while (TRUE) {
+        if (show.growth) {message(paste('Wild cell == ', toString(wild), ' mutant cell == ',
+            toString(mutants) )) }
+        R = (b1 + mu)*wild + b2*mutants
+        timeStep = -log( runif(1,0,1) )/R
+        timeNow = timeNow+timeStep
+       if (timeNow > T) {return(c(wild, mutants))} else {events=events+1}
+       if (runif(1,0,1) <= b1*(wild/R) ) {wild = wild + 1}  else  {mutants = mutants+1}
+       if (events>max.events) {message("simulation events exceed limit ..."); return(NA)}
+}   #while 
+}
+  
+
+
