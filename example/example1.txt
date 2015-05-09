@@ -1,4 +1,4 @@
-Date from a classic experiment by Demerec. This is one way to make data available to rSalvador.
+Data from a classic experiment by Demerec. This is one way to make data available to rSalvador.
 33
 18
 839
