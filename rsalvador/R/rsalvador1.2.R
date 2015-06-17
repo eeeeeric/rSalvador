@@ -3,6 +3,8 @@
 # Texas A&M School of Public Health
 # Version 1.0: April 20, 2014
 # Version 1.1: April 19, 2015
+# Version 1.2: June 2, 2015
+
 
 # ----------- July 9, 2013, first successful calling C from R for Salvador
 # ----------- Version 0.2 started December 22, 2013
@@ -131,7 +133,7 @@ return (est)
 
 
 # ---------------  computing  the LD distribution ----------------
-prob.LD=function(m,phi,k) {
+prob.LD=function(m,phi=1,k) {   ### June 3, 2015: let phi default to one.
 
 result.p=rep(1.1,k+1)
 
@@ -692,10 +694,10 @@ return( c(exp(low.limit), exp(up.limit)) )
 
 # -------- to plot the likelihood function along with the MLE of m, August 2, 2013
 
-plot.likelihood.LD=function(data,m.low=-1,m.up=-1,plot.pts=30,lik.col='black',mle.col='red',
-  title='', x.lab='Value of m', y.lab='Log-likelihood',show.secant=TRUE) {
+plot.likelihood.LD=function(data, init.m=0, m.low=-1,m.up=-1,plot.pts=30,lik.col='black',
+ mle.col='red', title='', x.lab='Value of m', y.lab='Log-likelihood',show.secant=TRUE) {
 
-mle=newton.LD(data)
+mle=newton.LD(data,init.m=init.m)  ### add init.m, June 5, 2015
 
 if (title=='') {tit=paste('Log-likelihood function for', deparse(substitute(data)))}
 else tit=title
@@ -719,6 +721,7 @@ abline(v=mle, col=mle.col)
 
 if (show.secant) abline(h=max.m, lty=2)
 
+grid()  ## June 5, 2015
 }
 
 # ----------- plating efficiency ----------
@@ -1074,6 +1077,8 @@ plot(mu.pts,likely,type='l',col=lik.col,main=tit,xlab=x.lab,ylab=y.lab)
 
 abline(v=mle, col=mle.col)
 
+grid() # June 5, 2015
+
 if (show.secant) abline(h=max.mu, lty=2)
 
 }
@@ -1143,5 +1148,357 @@ simu.Bartlett=function(b1,b2,mu,N0,T,max.events=1e10,show.growth=FALSE)
 }   #while 
 }
   
+
+######## May 15, 2015: fitness in Luria-Delbruck
+
+betaSeq=function(w,n) {
+
+r=1/w
+
+B=rep(0,n)
+
+B[1]=1/(1+r)
+
+for (k in 2:n) {
+
+  B[k]=(k-1)/(k+r) * B[k-1] }
+
+return(B)
+
+}
+
+
+# ---------------  probabilites for fitness, May 15, 2015 --------------
+
+prob.MK=function(m,w=1,n) {
+
+beta.seq=betaSeq(w,n)
+
+result.p=rep(0,n+1)
+
+########## if(! is.loaded('kochr')) dyn.load('koch.so')
+
+z=.C('pmfMK_R_wrapper',m=as.double(m),w=as.double(w),beta=as.double(beta.seq),
+
+   betaLen=as.integer(n+1),  prob=as.double(result.p))
+
+return(z$prob)
+
+}
+
+
+# ===================== newton.MK May 15, 2015  ===============
+
+newton.MK=function(data, w=1, tol=1e-8, init.m=0, max.iter=30, show.iter=FALSE) {
+
+if (init.m>0) {m0=init.m}
+
+# else { if (min(data)==0) m0=LD.p0.est(data) else m0=jones.median.plating(data,e=w) }
+
+else { if (median(data)>0) m0=jones.median.plating(data,e=w) else m0=LD.p0.est(data) }
+
+if (show.iter) message( paste('iteration 0 yielding ...', toString(m0) ) )
+
+B=betaSeq(w,max(data))/w
+
+h=append(B,-1,after=0)  # the h sequence
+
+for (i in 1:max.iter) {
+
+score.info=MK.score.info(m0,w,h,data)
+
+m1=m0+score.info[1]/score.info[2]
+
+if ( abs(m1-m0)/m0 <tol ) {return (m1)}
+
+else {
+
+if (show.iter) message( paste('iteration', toString(i), 'yielding ... ', toString(m1) )) ;
+
+ m0=m1
+
+}  # end of if-else
+
+} # end of for 
+
+return('no convergence')
+
+}
+
+
+# ----------- score and fisher info for Mandelbrot-Koch, May 15, 2015 --------
+
+MK.score.info=function(m,w,h,data) {
+
+n=max(data)
+
+p=prob.MK(m,w,n)
+
+p1=seq.convolute(h,p)
+
+p2=seq.convolute(h,p1)
+
+score=(p1/p)[data+1]
+
+info=( (p1/p)^2 -p2/p )[data+1]
+
+return( c(sum(score),sum(info)) )
+
+}
+
+
+# -------------------- adapted from partial plating, May 15, 2015
+
+MK.loglike.score=function(m,w,hSeq,data) {
+
+n=max(data)
+
+p=prob.MK(m,w,n)
+
+p1=seq.convolute(hSeq,p)
+
+loglike=log(p[data+1])
+
+score=(p1/p)[data+1]
+
+return( c(sum(loglike), sum(score)) )
+
+}
+
+
+# -------------- Mandelbrot-Koch, adapted from partial plating, May 15, 2015
+
+MK.score.info.loglikely=function(m,w,hSeq,data) {
+
+n=max(data)
+
+p=prob.MK(m,w,n)
+
+p1=seq.convolute(hSeq,p)
+
+p2=seq.convolute(hSeq,p1)
+
+loglike=log(p[data+1])
+
+score=(p1/p)[data+1]
+
+info=( (p1/p)^2 -p2/p )[data+1]
+
+return( c( sum(score), sum(info), sum(loglike) )  )
+
+}
+
+
+# ------------ confidence interval for MK model, fitness is w, May 15, 2015 ---------
+
+confint.MK=function(data,w=1,alpha=0.05,tol=1e-8,init.m=0,init.lower=0,init.upper=0,
+  max.iter=30,show.iter=FALSE) {
+
+initLow=init.lower
+
+initUp=init.upper
+
+B=betaSeq(w,max(data))/w
+
+hSeq=append(B,-1,after=0)
+
+mhat=newton.MK(data,w=w,tol=tol,init.m=init.m)
+
+if (show.iter) {message( paste('The ML estimate of M ... ',toString(mhat) ) ) }
+
+score.info.like=MK.score.info.loglikely(mhat,w=w,hSeq=hSeq,data=data)
+
+score=score.info.like[1]
+
+info=score.info.like[2]
+
+like=score.info.like[3]
+
+qa=qchisq(1-alpha,1)
+
+h=sqrt(qa/info)
+
+la=like-0.5*qa
+
+if (show.iter) message('Iterating for lower limit ... ')
+
+if (initLow<=0) {m0=mhat-0.5*h} else {m0=initLow}
+
+for (i in 1:max.iter) {
+
+ like.score=MK.loglike.score(m0,w,hSeq,data)
+
+ like=like.score[1];  score=like.score[2]
+
+ m1=m0 - (like -la)/score
+
+ if (show.iter) {message( paste('iteration ',toString(i), ' yielding', toString(m1)) ) }
+
+ if ( abs( (m1-m0)/m0 )<tol ) {mL=m1; break} else {m0=m1}
+
+} # end of 1st for loop
+
+
+if (show.iter) message('Iterating for upper limit ... ')
+
+if (initUp<=0) {m0=mhat+0.5*h} else {m0=initUp}
+
+for (i in 1:max.iter) {
+
+ like.score=MK.loglike.score(m0,w,hSeq,data)
+
+ like=like.score[1];  score=like.score[2]
+
+ m1=m0 - (like -la)/score
+
+ if (show.iter) {message( paste('iteration ',toString(i), ' yielding', toString(m1)) ) }
+
+ if ( abs( (m1-m0)/m0 )<tol ) {mU=m1; break} else {m0=m1}
+
+} # end of 2nd for loop
+
+return (c(mL,mU))
+
+}  # end of function
+
+
+############ Delbruck's likely average #####################
+### May 21, 2015: Delbruck's likely average to be extended 
+
+likely.average=function(data, b=1.24, classic=FALSE, init.m=0, tol=1e-9, max.iter=25,
+          use.median=TRUE, show.iter=FALSE) {
+
+if (classic) {n=length(data)} else {n=1}
+
+if (use.median) {med=median(data)} else {med=mean(data)} 
+if (med==0) {message('Median/mean is zero ...'); return( exp(-b) ) }     
+if (init.m<=0) {m0=(med-log(2))/(log(med)-log(log(2)))} else {m0=init.m}     
+
+if (show.iter) print(m0)        
+
+for(i in  1:max.iter) {       
+       m1 = m0 - (m0*log(n*m0)+b*n*m0-med)/(log(n*m0)+1+b*n);
+       if (show.iter)  print(m1)
+       if (abs((m0 - m1)/m0) < tol)  {return(m1)}  else {m0 = m1}  } ### end of for
+        message('no convergence')  
+} ### end of coulson
+
+
+##########  likelihood ratio tests ######################
+# June 4, 2015 -- extending LRT for comparion to the Mandelbrot-Koch model
+
+### finding the score and observed info for the model under null hypothesis
+
+combo.MK.score.info=function(m,X1,X2,R, w1=1,w2=1) {
+
+B1=betaSeq(w1,max(X1))/w1
+
+h1=append(B1,-1,after=0)
+
+B2=betaSeq(w2,max(X2))/w2
+
+h2=append(B2,-1,after=0)
+
+us1=MK.score.info(m,w1,h1,X1)
+
+us2=MK.score.info(R*m,w2,h2,X2)
+
+u1=us1[1]
+
+j1=us1[2]
+
+u2=us2[1]
+
+j2=us2[2]
+
+u=u1+R*u2
+
+j=j1+R*R*j2
+
+return(c(u,j))
+
+}
+
+### find Mc, the combined MLE, June 4, 2015
+
+# =====================combined newtonMK ===============
+
+combo.newton.MK=function(X1,X2,R, w1=1.0, w2=1.0,
+           tol=1e-8, init.m=0, max.iter=30, show.iter=FALSE) {
+
+Xc=c(X1,X2)
+
+if (init.m>0) {m0=init.m}
+
+   else if (init.m==0) 
+
+       {if (min(Xc)==0) m0=LD.p0.est(Xc) else m0=jones.median.est(Xc) }  ## option A
+
+   else 
+
+       {if (min(X1)==0) m0=LD.p0.est(X1) else m0=jones.median.est(X1) }  ## option B
+
+if (show.iter) message( paste('iteration 0 yielding ...', toString(m0) ) )
+
+for (i in 1:max.iter) {
+
+score.info=combo.MK.score.info(m0,X1,X2,R,w1,w2)
+
+m1=m0+score.info[1]/score.info[2]
+
+if ( abs(m1-m0)/m0 <tol ) {return (m1)}
+
+else {
+
+if (show.iter) message( paste('iteration', toString(i), 'yielding ... ', toString(m1) )) ;
+
+ m0=m1
+
+}  # end of if-else
+
+} # end of for 
+
+return('no convergence')
+
+}
+
+
+# -------------------- the MK likelihood function, June 4, 2015
+
+log.likelihood.MK=function(data,m,w=1) {
+
+n=max(data)
+
+p=prob.MK(m,w,n)
+
+loglike=sum(log(p[data+1]))
+
+return(loglike)
+
+} # end of log.likelihood.MK (Mandelbrot-Koch)
+
+
+######### putting Likelihood Ratio Test together, June 4, 2015
+
+LRT.MK=function(X1,X2,R=1,w1=1,w2=1,init.mc=0,init.m1=0,init.m2=0,tol=1e-9,show.iter=FALSE) {
+
+Mc=combo.newton.MK(X1,X2,R, w1, w2,init.m=init.mc,tol=tol,show.iter=show.iter)
+
+L0=log.likelihood.MK(X1,Mc,w1)+log.likelihood.MK(X2,R*Mc,w2)
+
+M1=newton.MK(X1,w1,init.m=init.m1,tol=tol,show.iter=show.iter)
+
+M2=newton.MK(X2,w2,init.m=init.m2,tol=tol,show.iter=show.iter)
+
+L1=log.likelihood.MK(X1,M1,w1)+log.likelihood.MK(X2,M2,w2)
+
+chi.sq.stat=-2*(L0-L1)
+
+pval=1-pchisq(chi.sq.stat,1)
+
+return(c(chi.sq.stat,pval))
+}
+
+
 
 

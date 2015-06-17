@@ -18,4 +18,7 @@ export(simu.Kimmel2,simu.Haldane2)
 export(compare.LD,simu.Bartlett)
 export(LD.score.info,LD.p0.est,jones.median.est)
 export(LD.score.info.plating,etaSeq,jones.median.plating,p0.plating)
+export(seq.convolute,log.likelihood.MK)
+export(prob.MK, newton.MK, confint.MK, plot.likelihood.MK, likely.average)
+export(LRT.MK)
 

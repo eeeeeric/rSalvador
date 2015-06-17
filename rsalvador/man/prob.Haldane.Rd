@@ -23,7 +23,7 @@ using an algorithm described in Zheng (2007).}
 
 
 
-\value{A vector contain the n+1 probabilities.}
+\value{A vector containing the first n+1 probabilities.}
 
 \references{
 S. Sarkar (1991) Haldane's solution of the Luria-Delbruck distribution,

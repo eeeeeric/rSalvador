@@ -8,17 +8,21 @@ model, using the stochastic formulation first proposed by Lea and Coulson (1948)
 A history of the Lea-Coulson formulation is given in Zheng (1999).}
 
 \usage{
-plot.likelihood.LD(data, m.low = -1, m.up = -1, plot.pts = 30,
+plot.likelihood.LD(data, init.m=0, m.low = -1, m.up = -1, plot.pts = 30,
   lik.col = "black", mle.col = "red", title = "", x.lab = "Value of m",
   y.lab = "Log-likelihood", show.secant = TRUE)
 }
 
 \arguments{
   \item{data}{A vector of experimental data (non-negative integers).}
+  
+  \item{init.m}{An initial guess of m for computing MLE of m.}
 
   \item{m.low}{plot.likelihood.LD plots the log-likelihood function for m ranging from
 between m.low to m.up.}
+
   \item{m.up}{see above.}
+
   \item{plot.pts}{number of points used to plot the log-likelihood functions. A larger number
  of points yields a smoother graph, but takes more computing time.}
 

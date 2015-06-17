@@ -2,6 +2,7 @@
 /* Qi Zheng, Department of epidemiology and Biostatistics */
 /* Texas A&M School of Public Health */
 /* Version 1.0: April 20, 2014 */
+/* Version 1.2: June 2, 2015 */
 
 
 /* July 9, 2013: to rewrite Salvador in R */
@@ -385,3 +386,26 @@ for (i=1; i<=gen; i++) {
     wild=wild+newWild;
 }
 }
+
+
+/* ------------ fitness, May 15, 2015 -------------- */
+
+void pmfMK(double m, double w, double* B, int betaLen, double* prob){
+
+int n,j;
+
+for(n=1;n<=betaLen-1;n++) prob[n]=0;
+prob[0]=exp(-m); 
+for(n=1;n<=betaLen-1;n++) {
+
+   for(j=1;j<=n;j++){
+
+      prob[n]=prob[n]+j*B[j-1]*prob[n-j]; }
+
+   prob[n]=prob[n]*m/n/w;};
+
+}
+
+
+
+

@@ -2,6 +2,7 @@
 /* Qi Zheng, Department of epidemiology and Biostatistics */
 /* Texas A&M School of Public Health */
 /* Version 1.0: April 20, 2014 */
+/* Version 1.2: June 2, 2015 */
 
 
 /* double* pdfluria(double, double, int, double*); */
@@ -98,6 +99,18 @@ simuKimm2(*nGgen, *mutRate, mutants0, mutants);
 void simuHald2_R_wrapper(int* gen, double* mu, int* mut0, int* mut) {
 
 simuHald2(*gen, *mu, mut0, mut); 
+
+};
+
+
+
+/* ------------ taking care of fitness, May 15, 2015 --------------- */
+
+void pmfMK(double, double, double*, int, double*);
+
+void pmfMK_R_wrapper(double* m, double* w, double* beta, int* betaLen, double* prob){
+
+pmfMK(*m, *w, beta, *betaLen, prob);
 
 };
 
