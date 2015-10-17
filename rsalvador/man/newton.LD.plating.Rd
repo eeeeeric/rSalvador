@@ -29,8 +29,8 @@ newton.LD.plating(data, e, tol = 1e-08, init.m = 0, max.iter = 30,
 \value{A positive number.}
 
 \references{
- Q. Zheng, (2008) A note on plating efficiency in fluctuation experiments,
-Mathematical Biosciences, 216:150-153.}
+Q. Zheng, A note on plating efficiency in fluctuation experiments,
+Mathematical Biosciences 216 (2008) 150-153.}
 
 \author{Qi Zheng <qzheng@sph.tamhsc.edu>}
 
@@ -40,5 +40,7 @@ Mathematical Biosciences, 216:150-153.}
 
 \seealso{newton.LD}
 
-\examples{}
+\examples{     
+newton.LD.plating(wh.data[[1]],e=0.4)
+}
 

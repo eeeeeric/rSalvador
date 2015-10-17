@@ -1172,6 +1172,10 @@ return(B)
 
 prob.MK=function(m,w=1,n) {
 
+if (n==0) {return(c(exp(-m)))}  ### June 28, 2015
+
+if (n==1) {return(c(exp(-m), m*exp(-m)/(1+w)))}  ### cases for n=0,1 added June 28, 2015
+
 beta.seq=betaSeq(w,n)
 
 result.p=rep(0,n+1)

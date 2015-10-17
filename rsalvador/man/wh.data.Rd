@@ -6,7 +6,8 @@ Experimental Data of Werngren and Hoffner
 }
 \description{
 There are 13 fluctuation experiments in this data object. From each
-5ml culture a sample of 1ml was plated, and hence the plating efficiency was e=0.2. Terminal
+condensed culture of 2.5ml a sample of 1ml was plated, and hence the plating
+efficiency is e=0.4. Terminal
 cell population sizes are c(2.3, 0.5, 1.3, 1.0, 1.6, 1.0, 1.0, 0.8, 1.2, 0.6, 0.8, 0.9, 0.9)
 times 1e8 per ml. Thus, for example, Nt=1.15e9 for the first experiment.
 }
@@ -26,6 +27,6 @@ Journal of clinical microbiology 41 (2003) 1520-1524.
 
 }
 \examples{
-newton.LD.plating(unlist(wh.data[1]),e=0.2)
+newton.LD.plating(wh.data[[1]],e=0.4)
 }
 \keyword{datasets}

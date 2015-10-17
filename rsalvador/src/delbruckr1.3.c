@@ -114,3 +114,17 @@ pmfMK(*m, *w, beta, *betaLen, prob);
 
 };
 
+
+
+/* -------------- the Bartlett B0 distribution, August 2, 2015 --------------- */
+
+void pmfBartzero(double, double,  int, double*);
+
+void pmfBartzero_R_wrapper(double* A, double* k, int* n, double* prob){
+
+pmfBartzero(*A, *k, *n, prob);
+
+};
+
+
+

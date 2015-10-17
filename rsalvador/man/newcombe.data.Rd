@@ -19,11 +19,11 @@ experiment consists of 25 cultures (0.2ml). Initial numbers of cells (N0) are:
 %%  ~~ reference to a publication or URL from which the data were obtained ~~
 }
 \references{
-HB Newcombe (1948) Delayed phenotypic expression of spontaneous
-mutations in Escherichia Coli, Genetics 33:447-476
+HB Newcombe, Delayed phenotypic expression of spontaneous
+mutations in Escherichia Coli, Genetics 33 (1948) 447-476.
 }
 \examples{
-LD.p0.est(unlist(newcombe.data[1]))
-newton.LD(unlist(newcombe.data[1]))
+LD.p0.est(newcombe.data[[1]])
+newton.LD(newcombe.data[[1]])
 }
 \keyword{datasets}

@@ -4,7 +4,7 @@
 \title{Classic Experimental Data of Demerec}
 
 \description{This data set came from one of the earliest fluctuation experiments performed by
-one of the pioneers in the field. It has been cited in the literature numerous times.}
+one of the pioneers in the field. It has been cited in the literature numerous times. Nt=1.9e8.}
 
 \details{
 %%  ~~ If necessary, more details than the __description__ above ~~

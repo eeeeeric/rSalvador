@@ -407,5 +407,35 @@ for(n=1;n<=betaLen-1;n++) {
 }
 
 
+/* ------------ Bartlett B0 distribution, August 1, 2015 -------------- */
 
+void pmfBartzero(double A, double k, int n, double* prob){
+double eta[n+1], xi[n+1];
+int i, j;
+
+for (i=0;i<=n;i++) eta[i]=0;
+for (i=0;i<=n;i++) xi[i]=0;
+for (i=0;i<=n;i++) prob[i]=0;
+
+eta[0]=1.0+A;
+
+for(i=1; i<=n; i++) eta[i]=-A/i/(i+1.0);
+
+xi[0]=log(1.0+A);
+
+for(i=1; i<=n; i++) {
+  for(j=1;j<=i-1; j++) {
+      xi[i]+=j*xi[j]*eta[i-j]; }
+  xi[i]=(i*eta[i]-xi[i])/(i*(1.0+A));
+}
+
+prob[0]=1.0/pow(1.0+A,k);
+for(i=1; i<=n; i++) {
+  for(j=1;j<=i;j++) {
+   prob[i]+=j*xi[j]*prob[i-j];}
+  prob[i]*= (-k/i); 
+}
+}
+
+ 
 

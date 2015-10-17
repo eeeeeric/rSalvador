@@ -1,16 +1,16 @@
-\name{LRT.MK}
-\alias{LRT.MK}
+\name{LRT.LD.plating}
+\alias{LRT.LD.plating}
 
 \title{
-Likelihood Ratio Test under the Mandelbrot-Koch Model
+Likelihood Ratio Test under the Classic Luria-Delbruck Model with Partial Plating
 }
 \description{
-The function computes the likelihood ratio test statistic. The algorithm is a
+The function computes the likelihood ratio test statistics. The algorithm is a
 generalization of a simpler algorithm given in Zheng (2015).
 }
 \usage{
-LRT.MK(X1, X2, R = 1, w1 = 1, w2 = 1, init.mc = 0, init.m1 = 0,
-  init.m2 = 0, tol = 1e-09, show.iter = FALSE)
+LRT.LD.plating(X1, X2, R = 1, e1 = 0.1, e2 = 0.1, init.mc = 0,
+      init.m1 = 0, init.m2 = 0, tol = 1e-09, show.iter = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,11 +22,11 @@ Data from the second experiment.
   \item{R}{
 Ratio of final cell population sizes, R=(Nt of second experiment)/(Nt of first experiment).
 }
-  \item{w1}{
-Relative fitness in the first experiment.
+  \item{e1}{
+Plating efficiency in the first experiment.
 }
-  \item{w2}{
-Relative experiment in the second experiment.
+  \item{e2}{
+Plating efficiency in the second experiment.
 }
   \item{init.mc}{
 Initial guess of m under the null hypothesis.
@@ -61,14 +61,9 @@ Qi Zheng <qzheng@sph.tamhsc.edu>
 }
 
 \seealso{
-LRT.LD
+%% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-x=simu.cultures(20,1e-8,1,1.2,50,2e8)
-y=simu.cultures(20,1e-8,1,1.4,50,3e8)
-LRT.MK(x,y,R=1.5,w1=1.2,w2=1.4)
+R=0.5/2.3
+LRT.LD.plating(wh.data[[1]],wh.data[[2]],R=R,e1=0.4,e2=0.4)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

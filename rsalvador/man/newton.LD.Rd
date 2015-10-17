@@ -30,8 +30,8 @@ newton.LD(data, phi = 1, tol = 1e-08, init.m = 0, max.iter = 30,
 \value{A positive number.}
 
 \references{
-Q. Zheng, (2005). New algorithms for Luria-Delbruck fluctuation analysis,
-Mathematical Biosciences 196:198-214 (2005).
+Q. Zheng, New algorithms for Luria-Delbruck fluctuation analysis,
+Mathematical Biosciences 196 (2005) 198-214.
 }
 
 \author{Qi Zheng <qzheng@sph.tamhsc.edu>}

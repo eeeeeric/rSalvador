@@ -21,6 +21,6 @@ survival and the emergence of drug resistance in Mycobacterium tuberculosis, Cel
 (2003) 183-193.
 }
 \examples{
-newton.LD(unlist(boshoff.data[1]))/(7.2e8)
+newton.LD(boshoff.data[[1]])/(7.2e8)
 }
 \keyword{datasets}

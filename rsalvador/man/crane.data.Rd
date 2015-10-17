@@ -19,6 +19,6 @@ GJ Crane, SM Thomas, ME Jones, A modified Luria-Delbruck fluctuation assay for e
 comparing mutation rates, Mutation Research 354 (1996) 171-182.
 }
 \examples{
-newton.LD.plating(unlist(crane.data[1]),0.1)
+newton.LD.plating(crane.data[[1]],e=0.1)
 }
 \keyword{datasets}
