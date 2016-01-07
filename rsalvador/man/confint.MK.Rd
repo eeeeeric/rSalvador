@@ -16,7 +16,7 @@ confint.MK(data, w = 1, alpha = 0.05, tol = 1e-08, init.m = 0,
 }
 
 \arguments{
-  \item{data}{A vector of experimental data (non-negative integers as mutant count.
+  \item{data}{A vector of experimental data (non-negative integers as mutant counts).
 
 }
   \item{w}{
@@ -26,7 +26,7 @@ Relative fitness defined as (mutant growth rate)/(nonmutant growth rate).
 
 }
   \item{tol}{
-Tolerance parameter to control for numerical accuracy.
+Tolerance parameter to control numerical accuracy.
 }
   \item{init.m}{
 Initial guess for the parameter m, often the default is sufficient.

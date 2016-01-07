@@ -22,7 +22,7 @@ times 1e8 per ml. Thus, for example, Nt=1.15e9 for the first experiment.
 \references{
 J Werngren, SE Hoffner, Drug-susceptible Mycobacterium tuberculosis Beijing genotype
 does not develop mutation-conferred resistance to rifampin at an elevated rate,
-Journal of clinical microbiology 41 (2003) 1520-1524.
+Journal of Clinical Microbiology 41 (2003) 1520-1524.
 
 
 }
