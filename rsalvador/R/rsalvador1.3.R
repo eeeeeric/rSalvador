@@ -4,6 +4,7 @@
 # Version 1.0: April 20, 2014
 # Version 1.1: April 19, 2015
 # Version 1.2: June 2, 2015
+# modified for Version 1.7: June 24, 2016
 
 
 # ----------- July 9, 2013, first successful calling C from R for Salvador
@@ -1154,6 +1155,8 @@ simu.Bartlett=function(b1,b2,mu,N0,T,max.events=1e10,show.growth=FALSE)
 betaSeq=function(w,n) {
 
 r=1/w
+
+if (n==1) return( 1/(1+r) )  ### Added June 24, 2016 (23:08)
 
 B=rep(0,n)
 

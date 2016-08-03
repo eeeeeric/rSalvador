@@ -10,8 +10,8 @@ functionalities is given in Zheng (2015).}
 \tabular{ll}{
 Package: \tab rSalvador\cr
 Type: \tab Package\cr
-Version: \tab 1.5\cr
-Date: \tab 2016-02-09\cr
+Version: \tab 1.6\cr
+Date: \tab 2016-08-01\cr
 License: \tab GPL 2.0  \cr
 }
 }

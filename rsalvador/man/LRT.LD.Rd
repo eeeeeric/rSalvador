@@ -5,9 +5,10 @@
 Likelihood Ratio Test under the Luria-Delbruck Model
 }
 \description{
-The function computes the likelihood ratio test statistic under the Luria-Delbruck
-model. Under this model, relative fitness w=1. The algorithm is a generalization
-of a simpler algorithm given in Zheng (2015).
+The function computes the likelihood ratio test statistic to compare the mutation
+rates in two independent fluctuation experiments. Both experiments are modeled
+by the standard Luria-Delbruck distribution. The algorithm is described in Zheng (2016),
+which is a generalization of a simpler algorithm given in Zheng (2015).
 }
 \usage{
 LRT.LD(X1, X2, R = 1, phi1 = 1, phi2 = 1, init.mc = 0, init.m1 = 0,
@@ -56,13 +57,15 @@ A pair of real numbers: (test statistic, p-value).
 \references{
 Q. Zheng, Methods for comparing mutation rates using fluctuation assay data, Mutation
 Research/Fundamental and Molecular Mechanisms of Mutagenesis 777 (2015) 20-22.
+
+Q. Zheng, Comparing mutation rates under the Luria-Delbruck protocol, Genetica 144 (2016) 351-359.
 }
 \author{
 Qi Zheng <qzheng@sph.tamhsc.edu>
 }
 
 \seealso{
-LRT.MK
+LRT.MK, LRT.LD.plating
 }
 \examples{
 x=simu.cultures(20,1e-8,1,1,50,2e8)

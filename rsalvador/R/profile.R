@@ -1,4 +1,5 @@
 ### starting date: Jan 13, 2016, joint inference using the MK model, for rSalvador version 1.5
+### modified June 25, 2016
 
 # -------------- first and second order derivatives, Jan 13, 2016 -------------------
 
@@ -408,7 +409,7 @@ if (show.iter) cat("Iteration ", i, " ... ", beta1[2], " \n")
 m1=beta1[1]; w1=beta1[2]
 m0=beta0[1]; w0=beta0[2]
 
-if ( abs(m1-m0)/m0<tol ) {w.upper=w1; break() }
+if ( abs(w1-w0)/w0<tol ) {w.upper=w1; break() }   ### changed m1,m2 to w1, w2, June 25, 2016
 
 srinfo=MK.score.info.joint(data,m1,w1)
 
@@ -425,5 +426,5 @@ beta0=beta1
 if (show.iter) cat('\n')
 return( c(w.lower, w.upper) )
 
-}  ########## end of confint.profile.w (Jan 16, 2016)
+}  ########## end of confint.profile.w (Jan 16, 2016; June 25, 2016)
 

@@ -5,8 +5,9 @@
 Likelihood Ratio Test under the Mandelbrot-Koch Model
 }
 \description{
-The function computes the likelihood ratio test statistic. The algorithm is a
-generalization of a simpler algorithm given in Zheng (2015).
+The function computes the likelihood ratio test statistic that compares the mutation
+rates in two independent fluctuation experiments. The algorithm is described in
+Zheng (2016), which is a generalization of a simpler algorithm given in Zheng (2015).
 }
 \usage{
 LRT.MK(X1, X2, R = 1, w1 = 1, w2 = 1, init.mc = 0, init.m1 = 0,
@@ -52,6 +53,9 @@ Logical variable to allow for display of the numerical iteration process.
 \references{
 Q. Zheng, Methods for comparing mutation rates using fluctuation assay data, Mutation
 Research/Fundamental and Molecular Mechanisms of Mutagenesis 777 (2015) 20-22.
+
+Q. Zheng, Comparing mutation rates under the Luria-Delbruck protocol, Genetica 144
+(2016) 351-359.
 }
 \author{
 Qi Zheng <qzheng@sph.tamhsc.edu>
@@ -61,7 +65,7 @@ Qi Zheng <qzheng@sph.tamhsc.edu>
 }
 
 \seealso{
-LRT.LD
+LRT.LD, LRT.LD.plating
 }
 \examples{
 x=simu.cultures(20,1e-8,1,1.2,50,2e8)

@@ -8,12 +8,7 @@
 /* July 9, 2013: to rewrite Salvador in R */
 
 #include <math.h>
-
-#ifdef __APPLE__
-    #include <malloc/malloc.h>
-#else
-    #include <malloc.h>
-#endif
+#include <malloc.h>
 
 #include <stdio.h>  /* added Dec 26, 2013, EOS needs this! */
 
