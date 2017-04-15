@@ -56,3 +56,44 @@ return(U)
 
 }
 
+
+
+### April 12, 2017: adding sample size calculation to rsalvador 1.7
+
+### MK model ###
+
+samp.size.MK=function(m=1.2,w=0.9,psi=0.25,trunc=3000) {
+
+fisher=fisher.MK(m,w,trunc)
+
+n=(1.96/m/psi)^2 / fisher
+
+return( ceiling(n) )
+
+}
+
+### LD model with partial plating ###
+
+samp.size.LD.plating=function(m=10.2,e=0.2,psi=0.25,trunc=3000) {
+
+fisher=fisher.LD.plating(m,e,trunc)
+
+n=(1.96/m/psi)^2 / fisher
+
+return( ceiling(n) )
+
+}
+
+
+## P0 method with partial plating, April 12, 2017
+
+
+p0.LD.plating=function (data, e) {
+    p0 = min(data)
+    if (p0 == 0) {
+        return( p0.plating(data=data, e=e) )
+    }
+    else {
+        message("The P0 method is not applicable to the given data.")
+    }
+}

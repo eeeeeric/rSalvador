@@ -727,13 +727,13 @@ grid()  ## June 5, 2015
 
 # ----------- plating efficiency ----------
 
-plot.likelihood.LD.plating=function(data,e,m.low=-1,m.up=-1,plot.pts=30,lik.col='black',
+plot.likelihood.LD.plating=function(data,e, init.m=0, m.low=-1,m.up=-1,plot.pts=30,lik.col='black',
 mle.col='red', title='', x.lab='Value of m', y.lab='Log-likelihood',show.secant=TRUE) {
 
 if (title=='') {tit=paste('Log-likelihood function for', deparse(substitute(data)))}
 else tit=title
 
-mle=newton.LD.plating(data,e)
+mle=newton.LD.plating(data,e,init.m=init.m)  # --- init.m added April 12, 2017 ---
 
 if (m.low==-1) {m0=mle*0.7}
  else {m0=m.low}

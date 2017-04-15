@@ -8,14 +8,15 @@ efficiency. The plating efficiency e is assumed to be known, the parameter m is 
 as the argument of the log-likelihood function.}
 
 \usage{
-plot.likelihood.LD.plating(data, e, m.low = -1, m.up = -1, plot.pts = 30,
-  lik.col = "black", mle.col = "red", title = "",
+plot.likelihood.LD.plating(data, e, init.m=0, m.low = -1, m.up = -1,
+   plot.pts = 30, lik.col = "black", mle.col = "red", title = "",
   x.lab = "Value of m", y.lab = "Log-likelihood", show.secant = TRUE)
 }
 
 \arguments{
   \item{data}{A vector of experimental data (non-negative integers).}
   \item{e}{Plating efficiency.}
+  \item{init.m}{An initial guess of the parameter m.}
   \item{m.low}{It plots the log-likelihood function for m ranging from m.low to m.up.}
   \item{m.up}{see above.}
   \item{plot.pts}{number of points used to plot the log-likelihood functions. A larger number
