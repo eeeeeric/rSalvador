@@ -3,6 +3,17 @@ rSalvador
 
 rSalvador: An R Tool for the Luria-Delbruck Fluctuation Assay
 
+Installing from GitHub
+----------------------
+
+- Download and install R 3.6.1.
+- Install Rtools 3.5 by downloading and executing the file Rtools35.exe.
+- Launch R.
+- Install the R package devtools by executing the following command from within R.
+```install.packages('devtools')```
+- Execute the following devtools command from within R.
+```devtools::install_github("eeeeeric/rSalvador",subdir = "rsalvador")```
+
 Installing from source
 ----------------------
 ```
