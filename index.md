@@ -1,3 +1,6 @@
+rSalvador
+=========
+
 Installation and Usage
 ----------------------
 Follow the [guide](https://github.com/eeeeeric/rSalvador/raw/master/docs/guide.pdf) for installation instructions and a basic tutorial.
