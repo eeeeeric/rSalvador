@@ -27,7 +27,7 @@ Installing from GitHub
 
 For Python 3 users
 ------------------
-Some frequently used rSalvador functions are also available in pySalvador for Python users ([source](https://github.com/eeeeeric/rSalvador/blob/master/pysalvador/pysalvador.py), [manual](https://github.com/eeeeeric/rSalvador/blob/master/pysalvador/userManual.html), [Jupyter manual](https://github.com/eeeeeric/rSalvador/blob/master/pysalvador/userManual.ipynb)).
+Some frequently used rSalvador functions are also available in pySalvador for Python users ([source](https://github.com/eeeeeric/rSalvador/blob/master/pysalvador/pysalvador.py), [Jupyter manual](https://github.com/eeeeeric/rSalvador/blob/master/pysalvador/userManual.ipynb)).
 
 Author
 ------
