@@ -1,0 +1,8 @@
+title: Rsalvador
+description: "rSalvador: An R Tool for the Luria-Delbruck Fluctuation Assay"
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-midnight
+
+gems:
+  - jekyll-mentions
