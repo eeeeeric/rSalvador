@@ -23,7 +23,7 @@ R CMD INSTALL rsalvador
 
 For Python 3 users
 ------------------
-Some frequently used rSalvador functions are also available in pySalvador for Python users ([source](./pysalvador/pysalvador.py), [manual](./pysalvador/userManual.html), [Jupyter manual](./pysalvador/userManual.ipynb)).
+Some frequently used rSalvador functions are also available in pySalvador for Python users ([source](./pysalvador/pysalvador.py), [Jupyter manual](./pysalvador/userManual.ipynb)).
 
 Building on Windows - Environment Preparation
 ---------------------------------------------
