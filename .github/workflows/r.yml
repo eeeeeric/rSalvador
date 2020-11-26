@@ -31,7 +31,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: my-artifact
-          path: rsalvador_*.(tar|zip|tgz)
+          path: rsalvador_*.*
           if-no-files-found: error
 #  R-CMD-INSTALL-build:
 #    runs-on: macOS-latest
