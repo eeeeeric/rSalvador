@@ -31,5 +31,6 @@ jobs:
     steps:
       - name: Build
         run: |
-        pwd
-        R CMD INSTALL --build
+          pwd
+          ls
+          R CMD INSTALL --build
