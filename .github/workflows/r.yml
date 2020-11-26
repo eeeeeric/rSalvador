@@ -10,7 +10,16 @@ name: R-CMD-check
 
 jobs:
   R-CMD-check:
-    runs-on: macOS-latest
+    runs-on: ${{ matrix.config.os }}
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { os: windows-latest, r: 'release' }
+          - { os: macOS-latest, r: 'release' }
+          - { os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
+
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -30,12 +39,6 @@ jobs:
         shell: bash
       - uses: actions/upload-artifact@v2
         with:
-          name: my-artifact
+          name: installable-archives
           path: rsalvador_*.*
           if-no-files-found: error
-#  R-CMD-INSTALL-build:
-#    runs-on: macOS-latest
-#    needs: R-CMD-check
-#    steps:
-#      - name: Build
-#        run: R CMD INSTALL --build rsalvador
