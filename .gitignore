@@ -6,3 +6,13 @@
 
 # R data files from past sessions
 .Rdata
+
+# IntelliJ
+.idea
+
+# Build artifacts
+rsalvador_*.zip
+rsalvador_*.tar
+rsalvador_*.tgz
+**/*.o
+**/*.so
