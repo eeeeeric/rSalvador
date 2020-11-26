@@ -33,4 +33,4 @@ jobs:
         run: |
           pwd
           ls
-          R CMD INSTALL --build
+          R CMD INSTALL --build rsalvador
