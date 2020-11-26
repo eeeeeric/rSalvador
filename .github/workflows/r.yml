@@ -25,9 +25,12 @@ jobs:
       - name: Check
         run: rcmdcheck::rcmdcheck("rsalvador", args = "--no-manual", error_on = "error")
         shell: Rscript {0}
-  R-CMD-INSTALL-build:
-    runs-on: macOS-latest
-    needs: R-CMD-check
-    steps:
-      - name: Build
+      - name: Install
         run: R CMD INSTALL --build rsalvador
+        shell: bash
+#  R-CMD-INSTALL-build:
+#    runs-on: macOS-latest
+#    needs: R-CMD-check
+#    steps:
+#      - name: Build
+#        run: R CMD INSTALL --build rsalvador
