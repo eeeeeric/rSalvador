@@ -1,15 +1,20 @@
 # For help debugging build failures open an issue on the RStudio community with the 'github-actions' tag.
 # https://community.rstudio.com/new-topic?category=Package%20development&tags=github-actions
+
+# This is run whenever master is updated and whenever a PR is made for master
 on:
+  push:
+    branches:
+      - master
   pull_request:
     branches:
-      - main
       - master
 
-name: R-CMD-check
+name: R-CMD-check-build
 
 jobs:
-  R-CMD-check:
+  R-CMD-check-build:
+    # This runs on Windows, Mac, and Linux (Ubuntu)
     runs-on: ${{ matrix.config.os }}
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
     strategy:
@@ -19,7 +24,6 @@ jobs:
           - { os: windows-latest, r: 'release' }
           - { os: macOS-latest, r: 'release' }
           - { os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
-
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -34,7 +38,7 @@ jobs:
       - name: Check
         run: rcmdcheck::rcmdcheck("rsalvador", args = "--no-manual", error_on = "error")
         shell: Rscript {0}
-      - name: Install
+      - name: Install and Build
         run: R CMD INSTALL --build rsalvador
         shell: bash
       - uses: actions/upload-artifact@v2
