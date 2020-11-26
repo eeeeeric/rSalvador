@@ -32,5 +32,4 @@ jobs:
       - name: Build
         run: |
         pwd
-        ls
         R CMD INSTALL --build
