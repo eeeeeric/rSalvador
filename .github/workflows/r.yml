@@ -30,7 +30,4 @@ jobs:
     needs: R-CMD-check
     steps:
       - name: Build
-        run: |
-          pwd
-          ls
-          R CMD INSTALL --build rsalvador
+        run: R CMD INSTALL --build rsalvador
