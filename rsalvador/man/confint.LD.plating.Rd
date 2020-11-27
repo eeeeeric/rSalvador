@@ -7,7 +7,7 @@
 accounts for plating efficiency. The algorithm was described in Zheng (2008).}
 
 \usage{
-confint.LD.plating(data, e, alpha = 0.05, tol = 1e-06, init.m = 0,
+confint.LD.plating(data, e, alpha = 0.05, tol = 1e-9, init.m = 0,
  init.lower = 0, init.upper = 0, max.iter = 30, show.iter = FALSE)}
 
 \arguments{

@@ -79,42 +79,49 @@ return(list(U1, U2, J11, J12, J22))
 
 
 # -------------- Newton-Raphson algorithm, Jan 14, 2016 --------------
+# stylistic revision, Nov 10, 2010
 
-newton.joint.MK=function (data, tol = 1e-08, init.m = -1, init.w=-1, max.iter = 30, 
-    show.iter = FALSE) 
-{   
+newton.joint.MK = function(data, tol = 1e-08, init.m = -1, init.w = -1, max.iter = 30, 
+                           show.iter = FALSE) {   
 
-if (init.m < 0) { m0=newton.LD(data) } else {m0=init.m}
+  if (init.m < 0) m0 = newton.LD(data, init.m = init.m) else m0 = init.m
 
-if (init.w < 0) { w0=1.0 } else {w0=init.w}
+  if (is.na(m0)) return(NA)  # Nov 11, 2020
 
-beta0=matrix( c(m0, w0), ncol=2)
+  if (init.w < 0)  w0=1.0  else w0 = init.w
 
-if (show.iter) 
-        message(paste("iteration 0 yielding ...", toString(beta0)))
+  beta0 = matrix(c(m0, w0), ncol = 2)
 
-for (i in 1:max.iter) {
+  if (show.iter) message(paste("iteration 0 yielding ... ", toString(beta0)))
 
-srinfo=MK.score.info.joint(data, beta0[1], beta0[2] )
+  for (i in 1:max.iter) {
 
-score=matrix( c(srinfo[[1]], srinfo[[2]]), ncol=2) 
+    srinfo = MK.score.info.joint(data, beta0[1], beta0[2])
 
-fisher=matrix(c(srinfo[[3]],srinfo[[4]],srinfo[[4]],srinfo[[5]]), ncol=2, byrow=TRUE)   
+    score = matrix(c(srinfo[[1]], srinfo[[2]]), ncol = 2) 
 
-beta1 = beta0 + crossprod(t(score), solve(fisher) )
+    fisher = matrix(c(srinfo[[3]], srinfo[[4]], srinfo[[4]], srinfo[[5]]), ncol = 2, byrow = TRUE)   
 
-        if ( sqrt(sum((beta0-beta1)^2))  < tol) {
-            return(as.vector(beta1))
-        }
-        else {
-            if (show.iter) 
-                message(paste("iteration", toString(i), "yielding ... ", 
-                  toString(beta1)))
-            beta0=beta1
+    beta1 = beta0 + crossprod(t(score), solve(fisher))
+
+    if ((beta1[1] < 0) || (beta1[2] < 0)) {message('Convergence fails. A new starting value may help.'); return(NA)} 
+
+    if (sqrt(sum((beta0 - beta1)^2 / sum(beta0^2))) < tol) return(as.vector(beta1))
+
+    else {
+            if (show.iter) message(paste("iteration", toString(i), "yielding ... ", toString(beta1)))
+
+            beta0 = beta1
         }
     }
-    cat("after ", toString(max.iter), " iterations, no convergence achieved\n.")
-}
+
+  cat('after', toString(max.iter), 'iterations, no convergence achieved.\n')
+
+  return(NA)
+
+} # end of newton.joint.MK
+
+
 
 
 # --- Jan 15, 2016; profile likelihood-based confidence intervals ---
@@ -154,129 +161,138 @@ return( c(ven.low.m, ven.low.w, ven.up.m, ven.up.w) )
 
 
 # --------------- computing profile CI for m, Jan 15, 2016 ---------------
+# stylistic revision, Nov 11, 2020
 
-confint.profile.m=function(data, alpha=0.05, init.low.m=-1, init.low.w=-1, init.up.m=-1,
-              init.up.w=-1, init.m=-1, init.w=-1,  max.iter=30, tol=1e-6, show.iter=FALSE) {
+confint.profile.m = function(data, alpha = 0.05, init.low.m = -1, init.low.w = -1, init.up.m = -1,
+                             init.up.w = -1, init.m = -1, init.w = -1,  max.iter = 30, tol = 1e-9, show.iter = FALSE) {
 
-if (init.m<0) {init.m0=-1} else {init.m0=init.m}
+  if (init.m < 0) init.m0 = -1 else init.m0 = init.m
 
-if (init.w<0) {init.w0=-1} else {init.w0=init.w}
+  if (init.w < 0) init.w0 = -1 else init.w0 = init.w
 
-if (show.iter) cat('\nComputing MLE ...\n')
+  if (show.iter) cat('\nComputing MLE ...\n')
 
-mle=newton.joint.MK(data, init.m=init.m0, init.w=init.w0, tol=tol, max.iter=max.iter)
+  mle = newton.joint.MK(data, init.m = init.m0, init.w = init.w0, tol = tol, max.iter = max.iter, show.iter = show.iter)
 
-if (show.iter) cat('MLE of m and w ...',  mle, ' \n')
+  if (is.na(mle[1])) return(NA)  # Nov 11, 2020
 
-m.hat=mle[1]; w.hat=mle[2]
+  if (show.iter) cat('MLE of m and w ...',  mle, ' \n')
 
-if ( (init.low.m<0)||(init.low.w<0)||(init.up.m<0)||(init.up.w<0) )
+  m.hat = mle[1]; w.hat = mle[2]
 
-    {all.inits=venzon.m(data, m.hat, w.hat, alpha=alpha) }
+  if ((init.low.m < 0) || (init.low.w < 0) || (init.up.m < 0) || (init.up.w < 0))
 
-if (init.low.m<0) {m0=all.inits[1]} else m0=init.low.m
+    all.inits=venzon.m(data, m.hat, w.hat, alpha=alpha) 
 
-if (init.low.w<0) {w0=all.inits[2]}  else w0=init.low.w
+  if (init.low.m < 0) m0 = all.inits[1] else m0 = init.low.m
 
+  if (init.low.w < 0) w0 = all.inits[2]  else w0 = init.low.w
 
 ### The matrix and vector in equation 37 of Zheng (Math. Biosci, 2015) 
 
-srinfo=MK.score.info.joint(data,m0,w0)
+  srinfo = MK.score.info.joint(data, m0, w0)
 
-zheng37mat=matrix(c(-srinfo[[1]],-srinfo[[2]],srinfo[[4]],srinfo[[5]]), ncol=2, byrow=TRUE)
+  zheng37mat = matrix(c(-srinfo[[1]], -srinfo[[2]], srinfo[[4]], srinfo[[5]]), ncol = 2, byrow = TRUE)
 
-like=loglikMK(data,m0,w0)
+  like = loglikMK(data, m0, w0)
 
-la=loglikMK(data,m.hat,w.hat)-0.5*qchisq(1-alpha,df=1)
+  la = loglikMK(data, m.hat, w.hat) - 0.5*qchisq(1 - alpha, df = 1)
 
-zheng37vet=matrix(c(like-la,srinfo[[2]]), ncol=1)
+  zheng37vet = matrix(c(like - la, srinfo[[2]]), ncol = 1)
 
-beta0=matrix(c(m0,w0),ncol=1)
+  beta0 = matrix(c(m0, w0), ncol = 1)
 
-if(show.iter) cat('\nComputing the lower limit ... \n')
+  if(show.iter) cat('\nComputing the lower limit ... \n')
 
-if (show.iter) cat("Iteration ", 0, " ... ", beta0[1], " \n")
+  if (show.iter) cat("Iteration ", 0, " ... ", beta0[1], " \n")
 
-for(i in 1:max.iter) {
+  for(i in 1:max.iter) {
 
-beta1 = beta0 + solve(zheng37mat) %*% zheng37vet
+    if (i == max.iter) {message('Maximum number of iterations reached.'); return(NA)} # Nov 11, 2020
 
-if (show.iter) cat("Iteration ", i, " ... ", beta1[1], " \n")
+    beta1 = beta0 + solve(zheng37mat) %*% zheng37vet
+
+    if (show.iter) cat("Iteration ", i, " ... ", beta1[1], " \n")
 
 ### updating .........
 
-m1=beta1[1]; w1=beta1[2]
-m0=beta0[1]; w0=beta0[2]
+    m1 = beta1[1]; w1 = beta1[2]
 
-if ( abs(m1-m0)/m0<tol ) {m.lower=m1; break() }
+    m0 = beta0[1]; w0 = beta0[2]
 
-srinfo=MK.score.info.joint(data,m1,w1)
+   if (sqrt(sum((beta0 - beta1)^2 / sum(beta0^2))) < tol) {m.lower = m1; break()} # Nov 11, 2020
 
-zheng37mat=matrix(c(-srinfo[[1]],-srinfo[[2]],srinfo[[4]],srinfo[[5]]), ncol=2, byrow=TRUE)
+    srinfo = MK.score.info.joint(data, m1, w1)
 
-like=loglikMK(data,m1,w1)
+    zheng37mat = matrix(c(-srinfo[[1]], -srinfo[[2]], srinfo[[4]], srinfo[[5]]), ncol = 2, byrow = TRUE)
 
-zheng37vet=matrix(c(like-la, srinfo[[2]]), ncol=1)
+    like = loglikMK(data, m1, w1)
 
-beta0=beta1
+    zheng37vet = matrix(c(like - la, srinfo[[2]]), ncol = 1)
+
+    beta0 = beta1
 
 } ## end of for lower limit
 
 # --------------- repeating for the upper limit --------------------
 
+  if (init.up.m < 0) m0 = all.inits[3] else m0 = init.up.m
 
-if (init.up.m<0) {m0=all.inits[3]} else m0=init.up.m
-
-if (init.up.w<0) {w0=all.inits[4]}  else w0=init.up.w
-
+  if (init.up.w < 0) w0 = all.inits[4]  else w0 = init.up.w
 
 ### The matrix and vector in equation 37 of Zheng (Math. Biosci, 2015) 
 
-srinfo=MK.score.info.joint(data,m0,w0)
+  srinfo = MK.score.info.joint(data, m0, w0)
 
-zheng37mat=matrix(c(-srinfo[[1]],-srinfo[[2]],srinfo[[4]],srinfo[[5]]), ncol=2, byrow=TRUE)
+  zheng37mat = matrix(c(-srinfo[[1]], -srinfo[[2]], srinfo[[4]], srinfo[[5]]), ncol = 2, byrow = TRUE)
 
-like=loglikMK(data,m0,w0)
+  like = loglikMK(data, m0, w0)
 
-la=loglikMK(data,m.hat,w.hat)-0.5*qchisq(1-alpha,df=1)
+  la = loglikMK(data, m.hat, w.hat) - 0.5*qchisq(1 - alpha, df = 1)
 
-zheng37vet=matrix(c(like-la,srinfo[[2]]), ncol=1)
+  zheng37vet = matrix(c(like - la, srinfo[[2]]), ncol = 1)
 
-beta0=matrix(c(m0,w0),ncol=1)
+  beta0 = matrix(c(m0, w0), ncol = 1)
 
-if(show.iter) cat('\nComputing the upper limit ... \n')
+  if(show.iter) cat('\nComputing the upper limit ... \n')
 
-if (show.iter) cat("Iteration ", 0, " ... ", beta0[1], " \n")
+  if (show.iter) cat("Iteration ", 0, " ... ", beta0[1], " \n")
 
-for(i in 1:max.iter) {
+  for(i in 1:max.iter) {
 
-beta1 = beta0 + solve(zheng37mat) %*% zheng37vet
+    if (i == max.iter) {message('Maximum number of iterations reached.'); return(NA)} # Nov 11, 2020
 
-if (show.iter) cat("Iteration ", i, " ... ", beta1[1], " \n")
+    beta1 = beta0 + solve(zheng37mat) %*% zheng37vet
+
+    if (show.iter) cat("Iteration ", i, " ... ", beta1[1], " \n")
 
 ### updating .........
 
-m1=beta1[1]; w1=beta1[2]
-m0=beta0[1]; w0=beta0[2]
+    m1 = beta1[1]; w1 = beta1[2]
 
-if ( abs(m1-m0)/m0<tol ) {m.upper=m1; break() }
+    m0 = beta0[1]; w0 = beta0[2]
 
-srinfo=MK.score.info.joint(data,m1,w1)
+    if (sqrt(sum((beta0 - beta1)^2 / sum(beta0^2))) < tol) {m.upper = m1; break()} # Nov 11, 2020
 
-zheng37mat=matrix(c(-srinfo[[1]],-srinfo[[2]],srinfo[[4]],srinfo[[5]]), ncol=2, byrow=TRUE)
+    srinfo = MK.score.info.joint(data, m1, w1)
 
-like=loglikMK(data,m1,w1)
+    zheng37mat = matrix(c(-srinfo[[1]], -srinfo[[2]], srinfo[[4]], srinfo[[5]]), ncol = 2, byrow = TRUE)
 
-zheng37vet=matrix(c(like-la, srinfo[[2]]), ncol=1)
+    like = loglikMK(data, m1, w1)
 
-beta0=beta1
+    zheng37vet = matrix(c(like - la, srinfo[[2]]), ncol = 1)
 
-} ## end of for upper limit
+    beta0 = beta1
 
-if (show.iter) cat('\n')
-return( c(m.lower, m.upper) )
+  } ## end of for upper limit
 
-}
+  if (show.iter) cat('\n')
+ 
+  return(c(m.lower, m.upper))
+
+} # end of confint.profile.m
+
+
 
 
 ### ========================== profile CI for w, relative fitness, Jan 16, 2016 ===========
@@ -304,127 +320,138 @@ return( c(ven.low.m, ven.low.w, ven.up.m, ven.up.w) )
 
 
 # --------------- computing profile CI for w, Jan 16, 2016 ---------------
+# stylistic revision, Nov 11, 2020
 
-confint.profile.w=function(data, alpha=0.05, init.low.m=-1, init.low.w=-1, init.up.m=-1,
-              init.up.w=-1, init.m=-1, init.w=-1, max.iter=30, tol=1e-6, show.iter=FALSE) {
+confint.profile.w = function(data, alpha = 0.05, init.low.m = -1, init.low.w = -1, init.up.m = -1,
+                             init.up.w = -1, init.m = -1, init.w= -1, max.iter = 30, tol = 1e-9, show.iter = FALSE) {
 
-if (init.m<0) {init.m0=-1} else {init.m0=init.m}
+  if (init.m < 0) init.m0 = -1 else init.m0 = init.m
 
-if (init.w<0) {init.w0=-1} else {init.w0=init.w}
+  if (init.w < 0) init.w0 =-1 else init.w0 = init.w
 
-if (show.iter) cat('\nComputing MLE ...\n')
+  if (show.iter) cat('\nComputing MLE ...\n')
 
-mle=newton.joint.MK(data, init.m=init.m0, init.w=init.w0, tol=tol, max.iter=max.iter)
+  mle = newton.joint.MK(data, init.m = init.m0, init.w = init.w0, tol = tol, max.iter = max.iter)
 
-if (show.iter) cat('MLE of m and w ...',  mle, ' \n')
+  if (is.na(mle[1])) return(NA)  # Nov 11, 2020
 
-m.hat=mle[1]; w.hat=mle[2]
+  if (show.iter) cat('MLE of m and w ...',  mle, ' \n')
 
-if ( (init.low.m<0)||(init.low.w<0)||(init.up.m<0)||(init.up.w<0) )
+  m.hat = mle[1]; w.hat = mle[2]
 
-    {all.inits=venzon.w(data, m.hat, w.hat, alpha=alpha) }
+  if ((init.low.m < 0) || (init.low.w < 0) || (init.up.m < 0) || (init.up.w < 0) )
 
-if (init.low.m<0) {m0=all.inits[1]} else m0=init.low.m
+    all.inits = venzon.w(data, m.hat, w.hat, alpha = alpha)
 
-if (init.low.w<0) {w0=all.inits[2]}  else w0=init.low.w
+  if (init.low.m < 0) m0 = all.inits[1] else m0 = init.low.m
 
+  if (init.low.w < 0) w0 = all.inits[2] else w0 = init.low.w
 
 ### The matrix and vector in equation 37 of Zheng (Math. Biosci, 2015) 
 
-srinfo=MK.score.info.joint(data,m0,w0)
+  srinfo = MK.score.info.joint(data, m0, w0)
 
-zheng37mat=matrix(c(-srinfo[[1]],-srinfo[[2]],srinfo[[3]],srinfo[[4]]), ncol=2, byrow=TRUE)
+  zheng37mat = matrix(c(-srinfo[[1]], -srinfo[[2]], srinfo[[3]], srinfo[[4]]), ncol = 2, byrow = TRUE)
 
-like=loglikMK(data,m0,w0)
+  like = loglikMK(data, m0, w0)
 
-la=loglikMK(data,m.hat,w.hat)-0.5*qchisq(1-alpha,df=1)
+  la = loglikMK(data, m.hat, w.hat) - 0.5*qchisq(1 - alpha, df = 1)
 
-zheng37vet=matrix(c(like-la,srinfo[[1]]), ncol=1)
+  zheng37vet = matrix(c(like - la, srinfo[[1]]), ncol = 1)
 
-beta0=matrix(c(m0,w0),ncol=1)
+  beta0 = matrix(c(m0, w0), ncol = 1)
 
-if(show.iter) cat('\nComputing the lower limit ... \n')
+  if(show.iter) cat('\nComputing the lower limit ... \n')
 
-if (show.iter) cat("Iteration ", 0, " ... ", beta0[2], " \n")
+  if (show.iter) cat("Iteration ", 0, " ... ", beta0[2], " \n")
 
-for(i in 1:max.iter) {
+  for(i in 1:max.iter) {
 
-beta1 = beta0 + solve(zheng37mat) %*% zheng37vet
+  if (i == max.iter) {message('Maximum number of iterations reached.'); return(NA)} # Nov 11, 2020
 
-if (show.iter) cat("Iteration ", i, " ... ", beta1[2], " \n")
+  beta1 = beta0 + solve(zheng37mat) %*% zheng37vet
+
+  if (show.iter) cat("Iteration ", i, " ... ", beta1[2], " \n")
 
 ### updating .........
 
-m1=beta1[1]; w1=beta1[2]
-m0=beta0[1]; w0=beta0[2]
+  m1 = beta1[1]; w1 = beta1[2]
 
-if ( abs(w1-w0)/w0<tol ) {w.lower=w1; break() }
+  m0 = beta0[1]; w0 = beta0[2]
 
-srinfo=MK.score.info.joint(data,m1,w1)
+  if (sqrt(sum((beta0 - beta1)^2 / sum(beta0^2))) < tol) {w.lower = w1; break()} # Nov 11, 2020
 
-zheng37mat=matrix(c(-srinfo[[1]],-srinfo[[2]],srinfo[[3]],srinfo[[4]]), ncol=2, byrow=TRUE)
+  srinfo = MK.score.info.joint(data, m1, w1)
 
-like=loglikMK(data,m1,w1)
+  zheng37mat = matrix(c(-srinfo[[1]], -srinfo[[2]], srinfo[[3]], srinfo[[4]]), ncol = 2, byrow = TRUE)
 
-zheng37vet=matrix(c(like-la, srinfo[[1]]), ncol=1)
+  like = loglikMK(data, m1, w1)
 
-beta0=beta1
+  zheng37vet = matrix(c(like - la, srinfo[[1]]), ncol = 1)
+
+  beta0 = beta1
 
 } ## end of for lower limit
 
 # --------------- repeating for the upper limit --------------------
 
+  if (init.up.m < 0) m0 = all.inits[3] else m0 = init.up.m
 
-if (init.up.m<0) {m0=all.inits[3]} else m0=init.up.m
-
-if (init.up.w<0) {w0=all.inits[4]}  else w0=init.up.w
-
+  if (init.up.w < 0) w0 = all.inits[4] else w0 = init.up.w
 
 ### The matrix and vector in equation 37 of Zheng (Math. Biosci, 2015) 
 
-srinfo=MK.score.info.joint(data,m0,w0)
+  srinfo = MK.score.info.joint(data, m0, w0)
 
-zheng37mat=matrix(c(-srinfo[[1]],-srinfo[[2]],srinfo[[3]],srinfo[[4]]), ncol=2, byrow=TRUE)
+  zheng37mat = matrix(c(-srinfo[[1]], -srinfo[[2]], srinfo[[3]], srinfo[[4]]), ncol = 2, byrow = TRUE)
 
-like=loglikMK(data,m0,w0)
+  like = loglikMK(data, m0, w0)
 
-la=loglikMK(data,m.hat,w.hat)-0.5*qchisq(1-alpha,df=1)
+  la = loglikMK(data, m.hat, w.hat) - 0.5*qchisq(1 - alpha, df = 1)
 
-zheng37vet=matrix(c(like-la,srinfo[[1]]), ncol=1)
+  zheng37vet = matrix(c(like - la, srinfo[[1]]), ncol = 1)
 
-beta0=matrix(c(m0,w0),ncol=1)
+  beta0 = matrix(c(m0, w0), ncol = 1)
 
-if(show.iter) cat('\nComputing the upper limit ... \n')
+  if(show.iter) cat('\nComputing the upper limit ... \n')
 
-if (show.iter) cat("Iteration ", 0, " ... ", beta0[2], " \n")
+  if (show.iter) cat("Iteration ", 0, " ... ", beta0[2], " \n")
 
-for(i in 1:max.iter) {
+  for(i in 1:max.iter) {
 
-beta1 = beta0 + solve(zheng37mat) %*% zheng37vet
+    if (i == max.iter) {message('Maximum number of iterations reached.'); return(NA)} # Nov 11, 2020
 
-if (show.iter) cat("Iteration ", i, " ... ", beta1[2], " \n")
+    beta1 = beta0 + solve(zheng37mat) %*% zheng37vet
+
+    if (show.iter) cat("Iteration ", i, " ... ", beta1[2], " \n")
 
 ### updating .........
 
-m1=beta1[1]; w1=beta1[2]
-m0=beta0[1]; w0=beta0[2]
+    m1 = beta1[1]; w1 = beta1[2]
 
-if ( abs(w1-w0)/w0<tol ) {w.upper=w1; break() }   ### changed m1,m2 to w1, w2, June 25, 2016
+    m0 = beta0[1]; w0 = beta0[2]
 
-srinfo=MK.score.info.joint(data,m1,w1)
+    if (sqrt(sum((beta0 - beta1)^2 / sum(beta0^2))) < tol) {w.upper = w1; break()} # Nov 11, 2020
 
-zheng37mat=matrix(c(-srinfo[[1]],-srinfo[[2]],srinfo[[3]],srinfo[[4]]), ncol=2, byrow=TRUE)
+    srinfo = MK.score.info.joint(data, m1, w1)
 
-like=loglikMK(data,m1,w1)
+    zheng37mat = matrix(c(-srinfo[[1]], -srinfo[[2]], srinfo[[3]], srinfo[[4]]), ncol = 2, byrow = TRUE)
 
-zheng37vet=matrix(c(like-la, srinfo[[1]]), ncol=1)
+    like = loglikMK(data, m1, w1)
 
-beta0=beta1
+    zheng37vet = matrix(c(like - la, srinfo[[1]]), ncol = 1)
 
-} ## end of for upper limit
+    beta0 = beta1
 
-if (show.iter) cat('\n')
-return( c(w.lower, w.upper) )
+  } ## end of for upper limit
 
-}  ########## end of confint.profile.w (Jan 16, 2016; June 25, 2016)
+  if (show.iter) cat('\n')
+
+  return(c(w.lower, w.upper))
+
+}  ########## end of confint.profile.w (Jan 16, 2016; June 25, 2016), Nov 11, 2020
+
+
+
+
 

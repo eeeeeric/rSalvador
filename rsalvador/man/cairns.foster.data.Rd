@@ -8,6 +8,7 @@
 \details{
 Experiment described in detail in Cairns and Foster (1991), data first appeared in
 Rosche and Foster (2000) with the maximum likelihood estimate of m explicitly given.
+Note Nt=1.5e8.
 }
 
 \source{

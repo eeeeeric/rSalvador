@@ -8,7 +8,7 @@ when plating efficiency is imperfect. It employs a Newton-Raphson type algorithm
 described in Zheng (2008).}
 
 \usage{
-newton.LD.plating(data, e, tol = 1e-08, init.m = 0, max.iter = 30,
+newton.LD.plating(data, e, tol = 1e-9, init.m = 0, max.iter = 30,
  show.iter = FALSE)
 }
 

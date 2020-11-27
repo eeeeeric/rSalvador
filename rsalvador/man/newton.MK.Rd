@@ -13,7 +13,7 @@ general algorithm given in Zheng (2005).
 }
 \usage{
 newton.MK(data, w = 1, tol = 1e-08, init.m = 0, max.iter = 30,
-  show.iter = FALSE)
+          show.iter = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,7 +21,7 @@ newton.MK(data, w = 1, tol = 1e-08, init.m = 0, max.iter = 30,
 A data vector containing the numbers of mutant cells from a fluctuation experiment.
 }
   \item{w}{
-Relative fitness define as (growth rate of mutants)/(growth rate of nonmutnats).
+Relative fitness define as (growth rate of mutants)/(growth rate of nonmutants).
 }
   \item{tol}{
 Tolerance parameter to set a desired convergence criterion.
@@ -30,7 +30,7 @@ Tolerance parameter to set a desired convergence criterion.
 An initial guess of m, it is rarely needed.
 }
   \item{max.iter}{
-A parameter to set the maximum number of iteration for the Newton-Raphson procedure.
+A parameter to set the maximum number of iterations for the Newton-Raphson procedure.
 }
   \item{show.iter}{
 A logical variable to show the numerical iteration process.
@@ -66,5 +66,5 @@ Qi Zheng <qzheng@sph.tamhsc.edu>
 newton.LD
 }
 \examples{
-newton.MK(demerec.data,w=1.25)
+newton.MK(demerec.data, w = 1.25)
 }

@@ -41,7 +41,7 @@ golden.benchmark.LD=function(data, Nt, mu.low=1e-12, mu.up=5e-7, tol=1e-9, max.i
 }  ### end of golden.LD
 
 
-### negative of the log likelihood function accouting for every Nt, a theoretical bench mark model, Aug 2, 2015 
+### negative of the log likelihood function accounting for every Nt, a theoretical bench mark model, Aug 2, 2015 
 neg.loglik.LD=function(y, Nt, b){
      n = length(y)  
      loglikely = 0  
@@ -238,7 +238,7 @@ return( list(p1,p2) )
 }
 
 
-# --------------- log-likelihood and the socre, without Fisher info, Oct 8, 2015
+# --------------- log-likelihood and the score, without Fisher info, Oct 8, 2015
 
 find.loglik.score.B0=function(A,k,data) {
 
@@ -262,7 +262,7 @@ return( c(sum(loglik),sum(score)) )
 
 
 
-# --------------- log-likelihood, the socre and the Fisher info: all three, Oct 8, 2015
+# --------------- log-likelihood, the score and the Fisher info: all three, Oct 8, 2015
 
 find.score.info.loglikely.B0=function(A,k,data) {
 

@@ -8,7 +8,7 @@ This function employs an algorithm described in Zheng (2005) to compute a likeli
 ratio-based confidence interval for m, the expected number of mutations per test tube.
 }
 \usage{
-confint.LD(data, alpha = 0.05, phi = 1, tol = 1e-06, init.m = 0,
+confint.LD(data, alpha = 0.05, phi = 1, tol = 1e-9, init.m = 0,
  init.lower = 0, init.upper = 0, max.iter = 30, show.iter = FALSE)}
 
 \arguments{

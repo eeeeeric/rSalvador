@@ -253,107 +253,141 @@ return(loglike)
 } # end of log.likelihood.LD
 
 
+# ============ newtonLD ===============
+
+newton.LD = function(data, phi = 1.0, tol = 1e-9, init.m = 0, max.iter = 30, show.iter = FALSE) {
+
+  if ( (min(data) < 0) || (max(data) == 0) )  # Nov 22, 2020, relevant to bootstrap
+    {message('Failed experiment -- no mutants observed in any of the cultures.'); return(NA) }
+
+  LARGE_M = 500; SMALL_M = 1e-9  # to avoid over/under flow, Nov 21, 2020
+
+  if (init.m > 0) {m0 = init.m}
+
+  else if (min(data) == 0) m0 = LD.p0.est(data)
+
+    else m0 = jones.median.est(data) * 0.618  ## Oct 31, 2020, to improve init guess
+
+  if (show.iter) message(paste('iteration 0 yielding ... ', toString(m0)))
+
+  if ( ! is.numeric(m0) || (m0 < SMALL_M) || (m0 > LARGE_M) )
+    {message('Unsuitable init.m encountered. A new starting value may work.'); return(NA) }  # Nov 7, 2020
+
+  for (i in 1:max.iter) {
+
+    score.info = LD.score.info(m0, phi, data)
+
+    m1 = m0 + score.info[1] / score.info[2]
+
+    if ( ! is.numeric(m1) || (m1 < SMALL_M) || (m1 > LARGE_M) )
+      {message('Convergence fails. A new starting value may work.'); return(NA) }  # Nov 21, 2020
+
+    if (abs(m1 - m0) / m0 < tol)  return(m1) 
+
+    else {
+
+    if (show.iter) message(paste('iteration', toString(i), 'yielding ... ', toString(m1))) ;
+
+    m0 = m1
+
+    }  # end of if-else
+
+  } # end of for 
+
+  message('Maximum number of iterations reached. No convergence.') # Nov 8, 2020
+
+  return(NA)
+
+} # end of newton.LD
 
 
-# ===================== newtonLD ===============
-
-newton.LD=function(data,phi=1.0, tol=0.00000001, init.m=0, max.iter=30, show.iter=FALSE) {
-
-if (init.m>0) {m0=init.m}
-
-else { if (median(data)==0) m0=LD.p0.est(data) else m0=jones.median.est(data) }
-
-if (show.iter) message( paste('iteration 0 yielding ...', toString(m0) ) )
-
-for (i in 1:max.iter) {
-
-score.info=LD.score.info(m0,phi,data)
-
-m1=m0+score.info[1]/score.info[2]
-
-if ( abs(m1-m0)/m0 <tol ) {return (m1)}
-
-else {
-
-if (show.iter) message( paste('iteration', toString(i), 'yielding ... ', toString(m1) )) ;
-
- m0=m1
-
-}  # end of if-else
-
-} # end of for 
-
-return('no convergence')
-
-}
 
 # ------------ July 10, 2013, Likelihood ratio CI for LD
 
-confint.LD=function(data,alpha=0.05,phi=1,tol=0.000001,init.m=0,init.lower=0,init.upper=0,
-  max.iter=30,show.iter=FALSE) {
+confint.LD = function(data, alpha=0.05, phi = 1, tol = 1e-9, init.m = 0, init.lower = 0, init.upper = 0,
+                          max.iter = 30, show.iter = FALSE) {
 
-initLow=init.lower
+  initLow = init.lower
 
-initUp=init.upper
+  initUp = init.upper
 
-mhat=newton.LD(data,phi=phi,tol=tol,init.m=init.m)
+  if (show.iter) message('Iterating for point estimate of m ... ')  # Nov 8, 2020
 
-if (show.iter) {message( paste('The ML estimate of M ... ',toString(mhat) ) ) }
+  mhat=newton.LD(data, phi = phi, tol = tol, init.m = init.m, show.iter = show.iter)
 
-score.info.like=LD.score.info.loglikely(mhat,phi=phi,data=data)
+  if (is.na(mhat)) return(NA)  # Nov 8, 2020
 
-score=score.info.like[1]
+  if (show.iter) message(paste('The ML estimate of m ... ', toString(mhat)))
 
-info=score.info.like[2]
+  score.info.like = LD.score.info.loglikely(mhat, phi = phi, data = data)
 
-like=score.info.like[3]
+  score = score.info.like[1]
 
-qa=qchisq(1-alpha,1)
+  info = score.info.like[2]
 
-h=sqrt(qa/info)
+  like = score.info.like[3]
 
-la=like-0.5*qa
+  qa = qchisq(1 - alpha, 1)
 
-if (show.iter) message('Iterating for lower limit ... ')
+  h = sqrt(qa / info)
 
-if (initLow<=0) {m0=mhat-0.5*h} else {m0=initLow}
+  la = like - 0.5 * qa
 
-for (i in 1:max.iter) {
+  if (show.iter) message('Iterating for lower limit ... ')
 
- like.score=LD.loglike.score(m0,phi,data)
+  if (initLow <= 0) m0 = mhat - 0.5 * h
+    
+     else m0=initLow
 
- like=like.score[1];  score=like.score[2]
+  if (show.iter) message(paste('iteration  0  yielding', toString(m0)))
 
- m1=m0 - (like -la)/score
+  for (i in 1:max.iter) {
 
- if (show.iter) {message( paste('iteration ',toString(i), ' yielding', toString(m1)) ) }
+    like.score = LD.loglike.score(m0, phi, data)
 
- if ( abs( (m1-m0)/m0 )<tol ) {mL=m1; break} else {m0=m1}
+    like = like.score[1];  score = like.score[2]
 
-} # end of 1st for loop
+    m1=m0 - (like - la) / score
+
+    if (show.iter) message(paste('iteration ', toString(i), ' yielding', toString(m1)))
+
+    if ( abs((m1 - m0) / m0) < tol) {mL = m1; break} 
+
+      else m0 = m1
+
+  } # end of 1st for loop
 
 
-if (show.iter) message('Iterating for upper limit ... ')
+  if (show.iter) message('Iterating for upper limit ... ')
 
-if (initUp<=0) {m0=mhat+0.5*h} else {m0=initUp}
+  if (initUp <= 0) m0 = mhat + 0.5 * h 
 
-for (i in 1:max.iter) {
+    else m0 = initUp
 
- like.score=LD.loglike.score(m0,phi,data)
+  if (show.iter) message(paste('iteration  0  yielding', toString(m0)))
 
- like=like.score[1];  score=like.score[2]
+  for (i in 1:max.iter) {
 
- m1=m0 - (like -la)/score
+    like.score = LD.loglike.score(m0, phi, data)
 
- if (show.iter) {message( paste('iteration ',toString(i), ' yielding', toString(m1)) ) }
+    like = like.score[1];  score = like.score[2]
 
- if ( abs( (m1-m0)/m0 )<tol ) {mU=m1; break} else {m0=m1}
+    m1 = m0 - (like - la) / score
 
-} # end of 2nd for loop
+    if (show.iter) message(paste('iteration ', toString(i), ' yielding', toString(m1)))
 
-return (c(mL,mU))
+    if (abs((m1 - m0) / m0) < tol) {mU = m1; break}
+      
+       else m0 = m1
 
-}  # end of function
+  } # end of 2nd for loop
+
+  return(c(mL, mU))
+
+}  # end of confint.LD
+
+
+
 
 # -------------------- plating efficiency, July 13, 2013
 
@@ -473,41 +507,47 @@ return( c(sum(score),sum(info)) )
 }
 
 
+# =============== newton.LD.plating July 14, 2013, Nov 9, 2020  ===============
 
+newton.LD.plating = function(data, e, tol = 1e-9, init.m = 0, max.iter = 30, show.iter = FALSE) {
 
-# ===================== newton.LD.plating July 14, 2013  ===============
+  if ( (min(data) < 0) || (max(data) == 0) )  # Nov 22, 2020, relevant to bootstrap
+    {message('Failed experiment -- no mutants observed in any of the cultures.'); return(NA) }
 
-newton.LD.plating=function(data, e, tol=0.00000001, init.m=0, max.iter=30, show.iter=FALSE) {
+  if (init.m > 0) m0 = init.m
 
-if (init.m>0) {m0=init.m}
+  else if (median(data) == 0) m0 = p0.plating(data,e)
 
-else { if (median(data)==0) m0=p0.plating(data,e) else m0=jones.median.plating(data,e) }
+    else m0 = jones.median.plating(data,e) 
 
-if (show.iter) message( paste('iteration 0 yielding ...', toString(m0) ) )
+  if (show.iter) message(paste('iteration 0 yielding ... ', toString(m0)))
 
-eta=etaSeq(e,max(data))
+  eta = etaSeq(e, max(data))
 
-for (i in 1:max.iter) {
+  for (i in 1:max.iter) {
 
-score.info=LD.score.info.plating(m0,e,eta,data)
+    score.info = LD.score.info.plating(m0, e, eta, data)
 
-m1=m0+score.info[1]/score.info[2]
+    m1 = m0 + score.info[1] / score.info[2]
 
-if ( abs(m1-m0)/m0 <tol ) {return (m1)}
+    if (!is.numeric(m1) || (m1 < 0) ) {message('Convergence fails. A new starting value may work.'); return(NA)}  # Nov 9, 2020
 
-else {
+    if (abs(m1 - m0) / m0 < tol ) return (m1)
 
-if (show.iter) message( paste('iteration', toString(i), 'yielding ... ', toString(m1) )) ;
+    else {
 
- m0=m1
+      if (show.iter) message(paste('iteration', toString(i), 'yielding ... ', toString(m1)));
 
-}  # end of if-else
+      m0 = m1}  # end of if-else
 
-} # end of for 
+  } # end of for 
 
-return('no convergence')
+  message('Maximum number of iterations reached. No convergence.') # Nov 9, 2020
 
-}
+  return(NA)
+
+} # end of newton.LD.plating
+
 
 
 # -------------------- LDLoglikeScorePlating[m,e,eta,data] from SALVADOR 2.3, July 15, 2013
@@ -556,75 +596,85 @@ return( c( sum(score), sum(info), sum(loglike) )  )
 }
 
 
+
 # ------------ July 15, 2013, Likelihood ratio CI for LD with plating efficiency e --------
 
-confint.LD.plating=function(data,e,alpha=0.05,tol=0.000001,init.m=0,init.lower=0,init.upper=0,
-  max.iter=30,show.iter=FALSE) {
+confint.LD.plating = function(data, e, alpha = 0.05, tol = 1e-9, init.m = 0, init.lower = 0, init.upper = 0,
+                              max.iter = 30, show.iter = FALSE) {
 
-initLow=init.lower
+  initLow = init.lower
 
-initUp=init.upper
+  initUp = init.upper
 
-eta=etaSeq(e,max(data))
+  eta = etaSeq(e, max(data))
 
-mhat=newton.LD.plating(data,e=e,tol=tol,init.m=init.m)
+  if (show.iter) message('Iterating for point estimate of m ... ')  # Nov 9, 2020
 
-if (show.iter) {message( paste('The ML estimate of M ... ',toString(mhat) ) ) }
+  mhat = newton.LD.plating(data, e = e, tol = tol, init.m = init.m, show.iter = show.iter)
 
-score.info.like=LD.score.info.loglikely.plating(mhat,e=e,eta=eta,data=data)
+  if (is.na(mhat)) return(NA)  # Nov 9, 2020
 
-score=score.info.like[1]
+  if (show.iter) message(paste('The ML estimate of M ... ', toString(mhat))) 
 
-info=score.info.like[2]
+  score.info.like = LD.score.info.loglikely.plating(mhat, e= e, eta = eta, data = data)
 
-like=score.info.like[3]
+  score = score.info.like[1]
 
-qa=qchisq(1-alpha,1)
+  info = score.info.like[2]
 
-h=sqrt(qa/info)
+  like = score.info.like[3]
 
-la=like-0.5*qa
+  qa = qchisq(1 - alpha, 1)
 
-if (show.iter) message('Iterating for lower limit ... ')
+  h = sqrt(qa / info)
 
-if (initLow<=0) {m0=mhat-0.5*h} else {m0=initLow}
+  la = like - 0.5 * qa
 
-for (i in 1:max.iter) {
+  if (show.iter) message('Iterating for lower limit ... ')
 
- like.score=LD.loglike.score.plating(m0,e,eta,data)
+  if (initLow <= 0) m0 = mhat - 0.5 * h 
 
- like=like.score[1];  score=like.score[2]
+    else m0 = initLow
 
- m1=m0 - (like -la)/score
+  for (i in 1:max.iter) {
 
- if (show.iter) {message( paste('iteration ',toString(i), ' yielding', toString(m1)) ) }
+  like.score = LD.loglike.score.plating(m0, e, eta, data)
 
- if ( abs( (m1-m0)/m0 )<tol ) {mL=m1; break} else {m0=m1}
+  like = like.score[1];  score = like.score[2]
 
-} # end of 1st for loop
+  m1 = m0 - (like - la) / score
+
+  if (show.iter) message(paste('iteration ', toString(i), ' yielding', toString(m1)))
+
+  if (abs((m1 - m0) / m0) < tol) {mL = m1; break} 
+
+    else m0=m1
+
+  } # end of 1st for loop
 
 
-if (show.iter) message('Iterating for upper limit ... ')
+  if (show.iter) message('Iterating for upper limit ... ')
 
-if (initUp<=0) {m0=mhat+0.5*h} else {m0=initUp}
+  if (initUp <= 0) m0 = mhat + 0.5 * h else m0 = initUp
 
-for (i in 1:max.iter) {
+  for (i in 1:max.iter) {
 
- like.score=LD.loglike.score.plating(m0,e,eta,data)
+  like.score = LD.loglike.score.plating(m0, e, eta, data)
 
- like=like.score[1];  score=like.score[2]
+  like = like.score[1];  score = like.score[2]
 
- m1=m0 - (like -la)/score
+  m1 = m0 - (like -la) / score
 
- if (show.iter) {message( paste('iteration ',toString(i), ' yielding', toString(m1)) ) }
+  if (show.iter) message(paste('iteration ', toString(i), ' yielding', toString(m1)))
 
- if ( abs( (m1-m0)/m0 )<tol ) {mU=m1; break} else {m0=m1}
+  if (abs((m1 - m0) / m0) <tol) {mU = m1; break} else m0 = m1
 
-} # end of 2nd for loop
+  } # end of 2nd for loop
 
-return (c(mL,mU))
+  return (c(mL, mU))
 
-}  # end of function
+}  # end of confint.LD.plating
+
 
 
 # -------------------- the LD likelihood function with plating, July 15, 2013
@@ -1050,7 +1100,7 @@ return(loglike)
 } # end of log.likelihood.LD
 
 
-# -------- to plot the likelihood function with the MLE of mu in Haldane, Decenber 25, 2013
+# -------- to plot the likelihood function with the MLE of mu in Haldane, December 25, 2013
 
 plot.likelihood.Haldane=function(data,g, init.mu=0, mu.low=-1,mu.up=-1,plot.pts=30,lik.col='black',
  mle.col='red', title='', x.lab='Value of mu', y.lab='Log-likelihood',show.secant=TRUE) {
@@ -1087,45 +1137,74 @@ if (show.secant) abline(h=max.mu, lty=2)
 
 ### ------------ comparison of mutation rates -----------------
 
-
-# Likelihood ratio test, rewritten my Mathematica code (2008) in R, April 13, 2014
+# Likelihood ratio test, rewriting my Mathematica code (2008) in R, April 13, 2014
 # revision, April 22, 2014
 # revision, April 19, 2015
+# revision, November 8, 2020
 
 # ---------- it assumes a common Nt, and hence a common phi parameter, April 19, 2015
 
-compare.LD=function(x1,x2,init.m0=0,init.m1=0,init.m2=0,phi=1){
-m1=newton.LD(x1,phi,init.m=init.m1)
-m2=newton.LD(x2,phi,init.m=init.m2)
-down=likely2(x1,x2,m1,m2,phi)
-y=unlist(c(x1,x2))
-m0=newton.LD(y,phi,init.m=init.m0)
-up=likely1(y,m0,phi)
-chi=-2*(up-down)
-pval=1-pchisq(chi,1)
-return(c(chi,pval))
+compare.LD = function(x1, x2, init.m0 = 0, init.m1 = 0, init.m2 = 0, phi = 1, show.iter = FALSE){
+
+  m1 = newton.LD(x1, phi, init.m = init.m1, show.iter = show.iter)
+
+  if (is.na(m1)) {message('Convergence fails. A new value of init.m1 may help.'); return(NA)} # Nov 8, 2020
+
+  m2 = newton.LD(x2, phi, init.m = init.m2, show.iter = show.iter)
+
+  if (is.na(m2)) {message('Convergence fails. A new value of init.m2 may help.'); return(NA)}
+
+  down = likely2(x1, x2, m1, m2, phi)
+
+  y = unlist(c(x1, x2))
+
+  m0 = newton.LD(y, phi, init.m = init.m0, show.iter = show.iter)
+
+  if (is.na(m0)) {message('Convergence fails. A new value of init.m0 may help.'); return(NA)}
+
+  up= likely1(y, m0, phi)
+
+  chi = -2 * (up - down)
+
+  pval = 1 - pchisq(chi, 1)
+
+  return(c(chi, pval))
 }
 
 # ----- for compare.LD
 
-likely2=function(x1,x2,m1,m2,phi=1) {
-n1=max(x1)
-n2=max(x2)
-p1=prob.LD(m1,phi,n1)
-p1=sum(log(p1[x1 +1]))
-p2=prob.LD(m2,phi,n2)
-p2=sum(log(p2[x2 +1]))
-return(p1+p2)
-}
+likely2 = function(x1, x2, m1, m2, phi = 1) {
+
+  n1 = max(x1)
+
+  n2 = max(x2)
+
+  p1 = prob.LD(m1, phi, n1)
+
+  p1 = sum(log(p1[x1 + 1]))
+
+  p2 = prob.LD(m2, phi, n2)
+
+  p2 = sum(log(p2[x2 + 1]))
+
+  return(p1 + p2)
+
+} # end of likely2
 
 # ----- for compare.LD
 
-likely1=function(x,m,phi=1) {
-n=max(x)
-p=prob.LD(m,phi,n)
-p=sum( log(p[x+1]) )
-return(p)
-}
+likely1 = function(x, m, phi = 1) {
+
+  n = max(x)
+
+  p = prob.LD(m, phi, n)
+
+  p = sum(log(p[x + 1]))
+
+  return(p)
+ 
+} # end of likely1
+
 
 ### ------ simulation under the Bartlett model, added April 19, 2015 ----
 
@@ -1171,7 +1250,7 @@ return(B)
 }
 
 
-# ---------------  probabilites for fitness, May 15, 2015 --------------
+# ---------------  probabilities for fitness, May 15, 2015 --------------
 
 prob.MK=function(m,w=1,n) {
 
@@ -1196,41 +1275,53 @@ return(z$prob)
 
 # ===================== newton.MK May 15, 2015  ===============
 
-newton.MK=function(data, w=1, tol=1e-8, init.m=0, max.iter=30, show.iter=FALSE) {
+newton.MK=function(data, w = 1, tol = 1e-8, init.m = 0, max.iter = 30, show.iter = FALSE) {
 
-if (init.m>0) {m0=init.m}
+  if ( (min(data) < 0) || (max(data) == 0) )  # Nov 22, 2020, relevant to bootstrap
+    {message('Failed experiment -- no mutants observed in any of the cultures.'); return(NA) }
 
-# else { if (min(data)==0) m0=LD.p0.est(data) else m0=jones.median.plating(data,e=w) }
+  LARGE_M = 500; SMALL_M = 1e-9  # to avoid over/under flow, Nov 21, 2020
 
-else { if (median(data)>0) m0=jones.median.plating(data,e=w) else m0=LD.p0.est(data) }
+  if (init.m > 0) {m0 = init.m}
 
-if (show.iter) message( paste('iteration 0 yielding ...', toString(m0) ) )
+  else { if (min(data) == 0) m0 = LD.p0.est(data) else m0 = jones.median.plating(data, e = w)*0.618 } # Oct 31, 2020
 
-B=betaSeq(w,max(data))/w
+  if (show.iter) message( paste('iteration 0 yielding ...', toString(m0) ) )
 
-h=append(B,-1,after=0)  # the h sequence
+  if ( ! is.numeric(m0) || (m0 < SMALL_M) || (m0 > LARGE_M) )
+    {message('Unsuitable init.m encountered. A new starting value may work.'); return(NA) }  # Nov 7, 2020
 
-for (i in 1:max.iter) {
+  B = betaSeq(w,max(data)) / w
 
-score.info=MK.score.info(m0,w,h,data)
+  h = append(B, -1, after = 0)  # the h sequence
 
-m1=m0+score.info[1]/score.info[2]
+  for (i in 1:max.iter) {
 
-if ( abs(m1-m0)/m0 <tol ) {return (m1)}
+    score.info = MK.score.info(m0, w, h, data)
 
-else {
+    m1 = m0 + score.info[1] / score.info[2]
 
-if (show.iter) message( paste('iteration', toString(i), 'yielding ... ', toString(m1) )) ;
+    if ( ! is.numeric(m1) || (m1 < SMALL_M) || (m1 > LARGE_M) )
+      {message('Convergence fails. A new starting value may work.'); return(NA) }  # Nov 7, 2020
 
- m0=m1
+    if ( abs(m1 - m0) / m0 <tol ) {return (m1)}
 
-}  # end of if-else
+    else {
 
-} # end of for 
+      if (show.iter) message( paste('iteration', toString(i), 'yielding ... ', toString(m1) )) ;
 
-return('no convergence')
+     m0 = m1
 
-}
+    }  # end of if-else
+
+  } # end of for 
+
+  message('Maximum number of iterations reached. No convergence.') # Nov 8, 2020
+
+  return(NA)
+
+} # end of newton.MK
+
 
 
 # ----------- score and fisher info for Mandelbrot-Koch, May 15, 2015 --------
@@ -1392,7 +1483,7 @@ for(i in  1:max.iter) {
 
 
 ##########  likelihood ratio tests ######################
-# June 4, 2015 -- extending LRT for comparion to the Mandelbrot-Koch model
+# June 4, 2015 -- extending LRT for comparison to the Mandelbrot-Koch model
 
 ### finding the score and observed info for the model under null hypothesis
 
@@ -1426,48 +1517,55 @@ return(c(u,j))
 
 }
 
+
 ### find Mc, the combined MLE, June 4, 2015
 
 # =====================combined newtonMK ===============
+# stylistic revision, Nov 12, 2020
 
-combo.newton.MK=function(X1,X2,R, w1=1.0, w2=1.0,
-           tol=1e-8, init.m=0, max.iter=30, show.iter=FALSE) {
+combo.newton.MK = function(X1, X2, R, w1 = 1.0, w2 = 1.0,
+                           tol = 1e-9, init.m = 0, max.iter = 30, show.iter = FALSE) {
 
-Xc=c(X1,X2)
+  Xc = c(X1, X2)
 
-if (init.m>0) {m0=init.m}
+  if (init.m > 0) m0 = init.m
 
-   else if (init.m==0) 
+  else if (init.m == 0) 
 
-       {if (min(Xc)==0) m0=LD.p0.est(Xc) else m0=jones.median.est(Xc) }  ## option A
+   {if (min(Xc) == 0) m0 = LD.p0.est(Xc) else m0 = jones.median.est(Xc)}  # option A
 
    else 
 
-       {if (min(X1)==0) m0=LD.p0.est(X1) else m0=jones.median.est(X1) }  ## option B
+     {if (min(X1) == 0) m0 = LD.p0.est(X1) else m0 = jones.median.est(X1)}  # option B
 
-if (show.iter) message( paste('iteration 0 yielding ...', toString(m0) ) )
+  if (show.iter) message(paste('iteration 0 yielding ...', toString(m0)))
 
-for (i in 1:max.iter) {
+  for (i in 1:max.iter) {
 
-score.info=combo.MK.score.info(m0,X1,X2,R,w1,w2)
+    score.info = combo.MK.score.info(m0, X1, X2, R, w1, w2)
 
-m1=m0+score.info[1]/score.info[2]
+    m1 = m0 + score.info[1] / score.info[2]
 
-if ( abs(m1-m0)/m0 <tol ) {return (m1)}
+    if (!is.numeric(m1) || (m1 < 0)) {message('Convergence fails. A new starting value may work.'); return(NA)}  # Nov 12, 2020
 
-else {
+    if (abs(m1 - m0) / m0 <tol) return(m1)
 
-if (show.iter) message( paste('iteration', toString(i), 'yielding ... ', toString(m1) )) ;
+    else {
 
- m0=m1
+      if (show.iter) message( paste('iteration', toString(i), 'yielding ... ', toString(m1) )) ;
 
-}  # end of if-else
+      m0 = m1
 
-} # end of for 
+    }  # end of if-else
 
-return('no convergence')
+  } # end of for 
 
-}
+  message('Maximum number of iterations reached. No convergence.') # Nov 12, 2020
+
+  return(NA)
+
+} # end of combo.newton.MK
+
 
 
 # -------------------- the MK likelihood function, June 4, 2015
@@ -1485,26 +1583,37 @@ return(loglike)
 } # end of log.likelihood.MK (Mandelbrot-Koch)
 
 
+
 ######### putting Likelihood Ratio Test together, June 4, 2015
+## stylistic revision, Nov 12, 2020
 
-LRT.MK=function(X1,X2,R=1,w1=1,w2=1,init.mc=0,init.m1=0,init.m2=0,tol=1e-9,show.iter=FALSE) {
+LRT.MK = function(X1, X2, R = 1, w1 = 1, w2 = 1, init.mc = 0, init.m1 = 0, init.m2 = 0,
+                  tol = 1e-9, max.iter = 30, show.iter=FALSE) {
 
-Mc=combo.newton.MK(X1,X2,R, w1, w2,init.m=init.mc,tol=tol,show.iter=show.iter)
+  Mc = combo.newton.MK(X1, X2, R, w1, w2, init.m = init.mc, tol = tol, max.iter = max.iter, show.iter = show.iter)
 
-L0=log.likelihood.MK(X1,Mc,w1)+log.likelihood.MK(X2,R*Mc,w2)
+  if (is.na(Mc)) {message('Convergence fails. A new value of init.mc may help.'); return(NA)}
 
-M1=newton.MK(X1,w1,init.m=init.m1,tol=tol,show.iter=show.iter)
+  L0 = log.likelihood.MK(X1, Mc, w1) + log.likelihood.MK(X2, R*Mc, w2)
 
-M2=newton.MK(X2,w2,init.m=init.m2,tol=tol,show.iter=show.iter)
+  M1 = newton.MK(X1, w1, init.m = init.m1, tol = tol, max.iter = max.iter, show.iter = show.iter)
 
-L1=log.likelihood.MK(X1,M1,w1)+log.likelihood.MK(X2,M2,w2)
+  if (is.na(M1)) {message('Convergence fails. A new value of init.m1 may help.'); return(NA)}
 
-chi.sq.stat=-2*(L0-L1)
+  M2 = newton.MK(X2, w2, init.m = init.m2, tol = tol, max.iter = max.iter, show.iter = show.iter)
 
-pval=1-pchisq(chi.sq.stat,1)
+  if (is.na(M2)) {message('Convergence fails. A new value of init.m2 may help.'); return(NA)}
 
-return(c(chi.sq.stat,pval))
-}
+  L1 = log.likelihood.MK(X1, M1, w1) + log.likelihood.MK(X2, M2, w2)
+
+  chi.sq.stat = -2 * (L0 - L1)
+
+  pval = 1 - pchisq(chi.sq.stat, 1)
+
+  return(c(chi.sq.stat, pval))
+
+} # end of LRT.MK
+
 
 
 
