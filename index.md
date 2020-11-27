@@ -1,6 +1,8 @@
 rSalvador
 =========
 
+Technical details are given in [Zheng (2017)](https://github.com/eeeeeric/rSalvador/blob/master/docs/G3Paper.pdf).
+
 Installation and Usage
 ----------------------
 Follow the [guide](https://github.com/eeeeeric/rSalvador/raw/master/docs/guide.pdf) for installation instructions and a basic tutorial.
