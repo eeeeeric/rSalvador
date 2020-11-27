@@ -14,7 +14,7 @@ detail in Zheng (2005).
 \usage{
 confint.profile.w(data, alpha = 0.05, init.low.m = -1, init.low.w = -1,
     init.up.m = -1, init.up.w = -1, init.m = -1, init.w = -1, 
-       max.iter = 30, tol = 1e-06, show.iter = FALSE)
+       max.iter = 30, tol = 1e-09, show.iter = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

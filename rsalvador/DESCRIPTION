@@ -1,9 +1,9 @@
 Package: rsalvador
-Version: 1.7
-Date: 2017-04-14
+Version: 1.8
+Date: 2020-11-26
 Title: rSalvador: An R Tool for the Luria-Delbruck Fluctuation Assay
-Author: Qi Zheng <qzheng@sph.tamhsc.edu>
-Maintainer: Qi Zheng <qzheng@sph.tamhsc.edu>
+Author: Qi Zheng <qzheng@tamu.edu>
+Maintainer: Qi Zheng <qzheng@tamu.edu>
 Depends: R (>= 2.15.0), hypergeo, gdata
 Description: Like its predecessor SALVADOR, rSalvador is a software tool intended
  for experimentalists running fluctuation experiments in the laboratory, and for biology
@@ -12,7 +12,8 @@ Description: Like its predecessor SALVADOR, rSalvador is a software tool intende
  rSalvador can compute maximum likelihood estimates and likelihood ratio-based confidence
  intervals, adjusting for relative fitness, variation in final cell population size or plating
  efficiency. rSalvador can also be used to compare mutation rates using likelihood ratio
- tests. In addition to the usual continuous-time mutation model, rSalvador can accommodate
+ tests and to construct confidence intervals for ratios of mutation rates in different experiments.
+ In addition to the usual continuous-time mutation model, rSalvador can accommodate
  Haldane's discrete-time mutation model. Furthermore, rSalvador can compute mutant cell
  distribution functions, plot log-likelihood functions, simulate fluctuation experiments and
  determine sample size.

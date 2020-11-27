@@ -14,5 +14,6 @@
 rsalvador_*.zip
 rsalvador_*.tar
 rsalvador_*.tgz
-**/*.o
-**/*.so
+*.o
+*.so
+*.rds

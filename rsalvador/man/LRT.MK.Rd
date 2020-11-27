@@ -11,7 +11,7 @@ Zheng (2016), which is a generalization of a simpler algorithm given in Zheng (2
 }
 \usage{
 LRT.MK(X1, X2, R = 1, w1 = 1, w2 = 1, init.mc = 0, init.m1 = 0,
-  init.m2 = 0, tol = 1e-09, show.iter = FALSE)
+       init.m2 = 0, tol = 1e-09, max.iter = 30, show.iter = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -41,6 +41,11 @@ Initial guess for m2, m of the second experiment.
   \item{tol}{
 Tolerance parameter to control numerical accuracy.
 }
+
+  \item{max.iter}{
+It controls the maximum number of iterations in the iterative numerical process.
+}
+
   \item{show.iter}{
 Logical variable to allow for display of the numerical iteration process.
 }
@@ -68,9 +73,9 @@ Qi Zheng <qzheng@sph.tamhsc.edu>
 LRT.LD, LRT.LD.plating
 }
 \examples{
-x=simu.cultures(20,1e-8,1,1.2,50,2e8)
-y=simu.cultures(20,1e-8,1,1.4,50,3e8)
-LRT.MK(x,y,R=1.5,w1=1.2,w2=1.4)
+x = simu.cultures(20, 1e-8, 1, 1.2, 50, 2e8)
+y = simu.cultures(20, 1e-8, 1, 1.4, 50, 3e8)
+LRT.MK(x, y, R = 1.5, w1 = 1.2, w2 = 1.4)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

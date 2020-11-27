@@ -7,7 +7,7 @@
 # Version 1.3: June 28, 2015
 # For non-essential functions file, June 5, 2015
 
-# ----------- plating likelihood under Mandelbrot-Koch, June 5, 2015  ----------
+# ----------- plotting likelihood under Mandelbrot-Koch, June 5, 2015  ----------
 
 plot.likelihood.MK=function(data,w=1,m.low=-1,m.up=-1, init.m=0, plot.pts=30,lik.col='black',
 mle.col='red', title='', x.lab='Value of m', y.lab='Log-likelihood',show.secant=TRUE) {
@@ -71,71 +71,81 @@ return(c(u,j))
 ### find Mc, the combined MLE, April 19, 2015
 
 
-# ================== combind newtonLD ===============
+# ================== combined newtonLD ===============
+# Revision: November 8, 2020
 
-combo.newton.LD=function(X1,X2,R, phi1=1.0, phi2=1.0,
-           tol=0.00000001, init.m=0, max.iter=30, show.iter=FALSE) {
+combo.newton.LD = function(X1, X2, R, phi1 = 1.0, phi2 = 1.0, tol = 1e-9, init.m = 0,
+                                max.iter = 30, show.iter = FALSE) {
 
-Xc=c(X1,X2)
+  Xc=c(X1, X2)
 
-if (init.m>0) {m0=init.m}
+  if (init.m>0) m0 = init.m
 
    else if (init.m==0) 
 
-       {if (min(Xc)==0) m0=LD.p0.est(Xc) else m0=jones.median.est(Xc) }  ## option A
+       {if (min(Xc)==0) m0 = LD.p0.est(Xc) else m0 = jones.median.est(Xc) }  ## option A
 
    else 
 
-       {if (min(X1)==0) m0=LD.p0.est(X1) else m0=jones.median.est(X1) }  ## option B
+       {if (min(X1) == 0) m0 = LD.p0.est(X1) else m0 = jones.median.est(X1) }  ## option B
 
-if (show.iter) message( paste('iteration 0 yielding ...', toString(m0) ) )
+  if (show.iter) message(paste('iteration 0 yielding ... ', toString(m0)))
 
-for (i in 1:max.iter) {
+  for (i in 1:max.iter) {
 
-score.info=combo.LD.score.info(m0,X1,X2,R,phi1,phi2)
+    score.info = combo.LD.score.info(m0, X1, X2, R, phi1, phi2)
 
-m1=m0+score.info[1]/score.info[2]
+    m1 = m0 + score.info[1] / score.info[2]
 
-if ( abs(m1-m0)/m0 <tol ) {return (m1)}
+    if (!is.numeric(m1) || (m1 < 0) ) {message('Convergence fails. A new starting value may work.'); return(NA)}  # Nov 8, 2020
 
-else {
+    if (abs(m1 - m0) / m0 < tol ) return (m1)
 
-if (show.iter) message( paste('iteration', toString(i), 'yielding ... ', toString(m1) )) ;
+    else {
 
- m0=m1
+      if (show.iter) message( paste('iteration', toString(i), 'yielding ... ', toString(m1)))
 
-}  # end of if-else
+       m0 = m1
 
-} # end of for 
+    }  # end of if-else
 
-return('no convergence')
+  } # end of for 
 
-}
+  message('Maximum number of iterations reached. No convergence.') # Nov 8, 2020
+
+  return(NA)
+
+} # end of combo.newton.LD
 
 
 ######### putting all together, April 20, 2015
 
-LRT.LD=function(X1,X2,R=1,phi1=1,phi2=1,init.mc=0,init.m1=0,init.m2=0,tol=1e-9,show.iter=FALSE) {
+LRT.LD = function(X1, X2, R = 1, phi1 = 1, phi2 = 1, init.mc = 0, init.m1 = 0, init.m2 = 0,
+                      tol = 1e-9, max.iter = 30, show.iter = FALSE) {
 
-Mc=combo.newton.LD(X1,X2,R, phi1, phi2,init.m=init.mc,tol=tol,show.iter=show.iter)
+  Mc = combo.newton.LD(X1, X2, R, phi1, phi2, init.m = init.mc, tol = tol, max.iter = max.iter, show.iter = show.iter)
 
-L0=log.likelihood.LD(X1,Mc,phi1)+log.likelihood.LD(X2,R*Mc,phi2)
+  if (is.na(Mc)) {message('Convergence fails. A new value of init.mc may help.'); return(NA)}
 
-M1=newton.LD(X1,phi1,init.m=init.m1,tol=tol,show.iter=show.iter)
+  L0 = log.likelihood.LD(X1, Mc, phi1) + log.likelihood.LD(X2, R * Mc, phi2)
 
-M2=newton.LD(X2,phi2,init.m=init.m2,tol=tol,show.iter=show.iter)
+  M1 = newton.LD(X1, phi1, init.m = init.m1, tol = tol, max.iter = max.iter, show.iter = show.iter)
 
-L1=log.likelihood.LD(X1,M1,phi1)+log.likelihood.LD(X2,M2,phi2)
+  if (is.na(M1)) {message('Convergence fails. A new value of init.m1 may help.'); return(NA)}
 
-chi.sq.stat=-2*(L0-L1)
+  M2 = newton.LD(X2, phi2, init.m = init.m2, tol = tol, max.iter = max.iter, show.iter = show.iter)
 
-pval=1-pchisq(chi.sq.stat,1)
+  if (is.na(M2)) {message('Convergence fails. A new value of init.m2 may help.'); return(NA)}
+ 
+  L1 = log.likelihood.LD(X1, M1, phi1) + log.likelihood.LD(X2, M2, phi2)
 
-return(c(chi.sq.stat,pval))
-}
+  chi.sq.stat = -2 * (L0 - L1)
 
-### ----------- end of LRT.LD -----------------------
+  pval = 1 - pchisq(chi.sq.stat, 1)
 
+  return(c(chi.sq.stat, pval))
+
+} # end of LRT.LD 
 
 
 
@@ -172,76 +182,89 @@ return(c(u,j))
 
 }
 
+
 ### find Mc, the combined MLE with plating, April 22, 2015
+### stylistic revision, November 9, 2020
 
-combo.newton.LD.plating=function(X1,X2,R,e1,e2, tol=0.00000001, init.m=0, max.iter=30,
-    show.iter=FALSE) {
+combo.newton.LD.plating = function(X1, X2, R, e1, e2, tol = 1e-9, init.m = 0, max.iter = 30, show.iter = FALSE) {
 
-Xc=c(X1,X2)
+  Xc = c(X1,X2)
 
-n1=length(X1); n2=length(X2); ec=(n1*e1+n2*e2)/(n1+n2)
+  n1 = length(X1); n2 = length(X2); ec = (n1 * e1 + n2 * e2) / (n1 + n2)
 
-if (init.m>0) {m0=init.m}
+  if (init.m>0) m0 = init.m
 
     else if (init.m==0) 
    
-         {if (median(Xc)==0) m0=p0.plating(Xc,ec) else m0=jones.median.plating(Xc,ec) } #option A
+         {if (median(Xc) == 0) m0 = p0.plating(Xc, ec) else m0 = jones.median.plating(Xc, ec)} #option A
 
     else 
 
-        {if (min(X1)==0) m0=p0.plating(X1,e1) else m0=jones.median.plating(X1,e1) }  #option B
+        {if (min(X1) == 0) m0 = p0.plating(X1, e1) else m0 = jones.median.plating(X1, e1) }  #option B
 
-if (show.iter) message( paste('iteration 0 yielding ...', toString(m0) ) )
+  if (show.iter) message(paste('iteration 0 yielding ... ', toString(m0)))
 
-eta1=etaSeq(e1,max(X1))
+  eta1 = etaSeq(e1, max(X1))
 
-eta2=etaSeq(e2,max(X2))
+  eta2 = etaSeq(e2, max(X2))
 
-for (i in 1:max.iter) {
+  for (i in 1:max.iter) {
 
-score.info=combo.LD.score.info.plating(m0,X1,X2,R,e1,e2)
+    score.info = combo.LD.score.info.plating(m0, X1, X2, R, e1, e2)
 
-m1=m0+score.info[1]/score.info[2]
+    m1 = m0 + score.info[1] / score.info[2]
 
-if ( abs(m1-m0)/m0 <tol ) {return (m1)}
+    if (!is.numeric(m1) || (m1 < 0) ) {message('Convergence fails. A new starting value may work.'); return(NA)}  # Nov 9, 2020
 
-else {
+    if ( abs(m1 - m0) / m0 <tol) return (m1)
 
-if (show.iter) message( paste('iteration', toString(i), 'yielding ... ', toString(m1) )) ;
+    else {
 
- m0=m1
+    if (show.iter) message(paste('iteration', toString(i), 'yielding ... ', toString(m1))) ;
 
-}  # end of if-else
+     m0 = m1
 
-} # end of for 
+    } # end of if-else
 
-return('no convergence')
+  } # end of for 
 
-}
+  message('Maximum number of iterations reached. No convergence.') # Nov 9, 2020
 
+  return(NA)
+
+} # end of combo.newton.LD.plating
 
 
 ######### putting all together -- comparison with plating, April 22, 2015
 
-LRT.LD.plating=function(X1,X2,R=1,e1=0.1,e2=0.1,init.mc=0,init.m1=0,init.m2=0,
-     tol=1e-9,show.iter=FALSE) {
+LRT.LD.plating = function(X1, X2, R = 1, e1 = 0.1, e2 = 0.1, init.mc = 0, init.m1 = 0, init.m2 = 0,
+                          tol = 1e-9, max.iter = 30, show.iter = FALSE) {
 
-Mc=combo.newton.LD.plating(X1,X2,R,e1,e2,init.m=init.mc,tol=tol,show.iter=show.iter)
+  Mc = combo.newton.LD.plating(X1, X2, R, e1, e2, init.m = init.mc, tol = tol, max.iter = max.iter, show.iter = show.iter)
 
-L0=log.likelihood.LD.plating(X1,Mc,e1)+log.likelihood.LD.plating(X2,R*Mc,e2)
+  if (is.na(Mc)) {message('Convergence fails. A new value of init.mc may help.'); return(NA)} # Nov 9, 2020
 
-M1=newton.LD.plating(X1,e1,init.m=init.m1,tol=tol,show.iter=show.iter)
+  L0 = log.likelihood.LD.plating(X1, Mc, e1) + log.likelihood.LD.plating(X2, R*Mc, e2)
 
-M2=newton.LD.plating(X2,e2,init.m=init.m2,tol=tol,show.iter=show.iter)
+  M1 = newton.LD.plating(X1, e1, init.m = init.m1, tol = tol, max.iter = max.iter, show.iter = show.iter)
 
-L1=log.likelihood.LD.plating(X1,M1,e1)+log.likelihood.LD.plating(X2,M2,e2)
+  if (is.na(M1)) {message('Convergence fails. A new value of init.m1 may help.'); return(NA)}
 
-chi.sq.stat=-2*(L0-L1)
+  M2 = newton.LD.plating(X2, e2, init.m = init.m2, tol = tol, max.iter = max.iter, show.iter = show.iter)
 
-pval=1-pchisq(chi.sq.stat,1)
+  if (is.na(M2)) {message('Convergence fails. A new value of init.m2 may help.'); return(NA)}
 
-return(c(chi.sq.stat,pval))
-}
+  L1 = log.likelihood.LD.plating(X1, M1, e1) + log.likelihood.LD.plating(X2, M2, e2)
+
+  chi.sq.stat = -2 * (L0 - L1)
+
+  pval = 1 - pchisq(chi.sq.stat, 1)
+
+  return(c(chi.sq.stat, pval))
+
+} # end of LRT.LD.plating
+
+
 
 
 #####################################################
@@ -483,7 +506,7 @@ return(z$prob)
 }
 
 
-# ------------ accouting for variation in Nt under LD model, added Aug 3, 2015 ----------
+# ------------ accounting for variation in Nt under LD model, added Aug 3, 2015 ----------
 ### Revised, October 4, 2015 -- deal with m directly, not via log(m)
 
 ### negative of log likelihood function of the Bartlett B0 model, Aug 2, 2015

@@ -9,7 +9,7 @@ culture, using a Newton-Raphson type algorithm described in Zheng (2005).
 }
 
 \usage{
-newton.LD(data, phi = 1, tol = 1e-08, init.m = 0, max.iter = 30,
+newton.LD(data, phi = 1, tol = 1e-9, init.m = 0, max.iter = 30,
  show.iter = FALSE)
 }
 

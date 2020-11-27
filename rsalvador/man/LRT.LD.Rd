@@ -12,18 +12,19 @@ which is a generalization of a simpler algorithm given in Zheng (2015).
 }
 \usage{
 LRT.LD(X1, X2, R = 1, phi1 = 1, phi2 = 1, init.mc = 0, init.m1 = 0,
-     init.m2 = 0, tol = 1e-09, show.iter = FALSE)
+     init.m2 = 0, tol = 1e-09, max.iter = 30, show.iter = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{X1}{
-Data from the first experiment.
+Mutant count data from the first experiment.
 }
   \item{X2}{
-%%     ~~Describe \code{X2} here~~
+Mutant count data from the second experiment.
 }
   \item{R}{
-Data from the second experiment.
+Ratio of final cell population sizes, R=(Nt of second
+          experiment)/(Nt of first experiment).
 }
   \item{phi1}{
 "Time" parameter for the first experiment, usually set to unit.
@@ -43,6 +44,11 @@ Initial guess of m for the second experiment.
   \item{tol}{
 Tolerance parameter to control numerical accuracy.
 }
+
+  \item{max.iter}{
+Maximum number of iterations allowed in the numerical iteration process.
+}
+
   \item{show.iter}{
 Logical variable to control the display of the numerical iteration process.
 }

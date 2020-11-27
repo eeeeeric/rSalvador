@@ -11,7 +11,7 @@ Zheng (2016), which is a generalization of a simpler algorithm given in Zheng (2
 }
 \usage{
 LRT.LD.plating(X1, X2, R = 1, e1 = 0.1, e2 = 0.1, init.mc = 0,
-      init.m1 = 0, init.m2 = 0, tol = 1e-09, show.iter = FALSE)
+      init.m1 = 0, init.m2 = 0, tol = 1e-09, max.iter = 30, show.iter = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -41,6 +41,9 @@ Initial guess for m2, m of the second experiment.
   \item{tol}{
 Tolerance parameter to control numerical accuracy.
 }
+  \item{max.iter}{
+Maximum number of iterations allowed in the numerical iteration process.
+}
   \item{show.iter}{
 Logical variable to allow for display of the numerical iteration process.
 }
@@ -57,7 +60,7 @@ Research/Fundamental and Molecular Mechanisms of Mutagenesis 777 (2015) 20-22.
 Q. Zheng, Comparing mutation rates under the Luria-Delbruck protocol, Genetica 144 (2016) 351-359.
 }
 \author{
-Qi Zheng <qzheng@sph.tamhsc.edu>
+Qi Zheng <qzheng@tamu.edu>
 }
 \note{
 %%  ~~further notes~~
@@ -67,6 +70,6 @@ Qi Zheng <qzheng@sph.tamhsc.edu>
 LRT.MK
 }
 \examples{
-R=0.5/2.3
-LRT.LD.plating(wh.data[[1]],wh.data[[2]],R=R,e1=0.4,e2=0.4)
+R = 0.5 / 2.3
+LRT.LD.plating(wh.data[[1]], wh.data[[2]], R = R, e1 = 0.4, e2 = 0.4)
 }
