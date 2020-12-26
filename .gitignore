@@ -21,3 +21,4 @@ rsalvador_*.tgz
 # Python
 __pycache__
 *.pyc
+venv
