@@ -17,3 +17,7 @@ rsalvador_*.tgz
 *.o
 *.so
 *.rds
+
+# Python
+__pycache__
+*.pyc
