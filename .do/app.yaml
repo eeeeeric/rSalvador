@@ -1,0 +1,8 @@
+name: r-salvador
+services:
+  - name: websalvador
+    github:
+      repo: eeeeeric/rSalvador
+      branch: master
+      deploy_on_push: true
+    dockerfile_path: websalvador/Dockerfile

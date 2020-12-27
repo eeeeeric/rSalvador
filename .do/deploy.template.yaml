@@ -1,0 +1,8 @@
+spec:
+  name: r-salvador
+  services:
+    - name: websalvador
+      git:
+        branch: master
+        repo_clone_url: https://github.com/eeeeeric/rSalvador.git
+      dockerfile_path: websalvador/Dockerfile

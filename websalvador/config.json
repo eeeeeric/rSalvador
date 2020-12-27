@@ -1,0 +1,18 @@
+{
+  "listeners": {
+    "*:80": {
+      "pass": "applications/flask"
+    }
+  },
+
+  "applications": {
+    "flask": {
+      "type": "python 3",
+      "path": "/rSalvador/app/",
+      "module": "app",
+      "callable": "app",
+      "protocol": "wsgi",
+      "threads": 10
+    }
+  }
+}
