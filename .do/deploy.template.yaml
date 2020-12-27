@@ -3,6 +3,6 @@ spec:
   services:
     - name: websalvador
       git:
-        branch: websalvador
+        branch: master
         repo_clone_url: https://github.com/eeeeeric/rSalvador.git
       dockerfile_path: websalvador/Dockerfile

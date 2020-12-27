@@ -3,6 +3,6 @@ services:
   - name: websalvador
     github:
       repo: eeeeeric/rSalvador
-      branch: websalvador
-      deploy_on_push: false
+      branch: master
+      deploy_on_push: true
     dockerfile_path: websalvador/Dockerfile
