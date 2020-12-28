@@ -3,7 +3,8 @@ FROM ubuntu:20.04
 # Install R
 RUN apt-get update --fix-missing
 RUN apt-get install -y dirmngr gnupg apt-transport-https ca-certificates software-properties-common
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 || \
+      apt-key adv --keyserver pgp.mit.edu --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
 RUN add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/'
 RUN apt-get install -y r-base r-base-dev
 RUN apt-get install -y build-essential
