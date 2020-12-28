@@ -3,7 +3,15 @@ services:
   - name: websalvador
     github:
       repo: eeeeeric/rSalvador
-      branch: digitalocean
+      branch: master
       deploy_on_push: true
     dockerfile_path: websalvador/Dockerfile
     source_dir: websalvador
+    http_port: 80
+    health_check:
+      initial_delay_seconds: 5
+      period_seconds: 1
+      timeout_seconds: 3
+      success_threshold: 3
+      failure_threshold: 3
+      http_path: /
