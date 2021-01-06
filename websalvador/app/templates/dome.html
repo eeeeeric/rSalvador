@@ -1,0 +1,126 @@
+{% extends 'baseFig.html' %}
+
+
+<head> 
+   <link rel='stylesheet' type='text/css/ href= {{ url_for('static', filename='zheng_style.css') }} /'>
+
+</head>
+
+
+
+{% block content %}
+
+   <h3>{% block title %} Overview{% endblock %}</h3>
+
+<!--    <hr>  --- no bar -->
+<table>
+<tr>
+
+<td>
+
+<div width="70">
+<article width="65"><img src='./static/slotMachine.png' Style='float:right; padding:10px' width='250'>
+webSalvador traces its origin to
+<a href=' https://www.sciencedirect.com/science/article/abs/pii/S0025556402000871'>
+SALVADOR (2002)</a>, executable code of which is 
+still available at <a href='https://library.wolfram.com/infocenter/MathSource/4246/'>Wolfram Research</a>. 
+It was re-written and expanded in 2017 in the R language, named rSalvador.
+Details of rSalvador are given in <a href='https://www.g3journal.org/content/7/12/3849'>
+Zheng(2017)</a> webSalvador offers some most frequently used functionalities in rSalvador.
+
+<br> <p>  </p>
+Among features unique to webSalvador are the following two. First,
+it computes likelihood ratio-based confidence intervals, which is
+known to be superior to the commonly used Wald-type confidence intervals
+when sample size is small. The algorithm for computing likelihood
+ratio-based confidence interval is given in
+<a href='https://www.sciencedirect.com/science/article/pii/S0025556405000568'> Zheng (2005).</a>
+Second, when accounting for variation in Nt, it adopts a Gamma mixture 
+model, which allows for exact computation. The Gamma mixture model
+was introduced in <a href='https://link.springer.com/article/10.1007/s10709-012-9639-8'>
+Zheng (2012)</a> Note that the adjustment for variation in Nt is necessary only when the the variation is
+considerably large; see <a href='https://www.sciencedirect.com/science/article/pii/S0022519316300558?via%3Dihub/'>Zheng (2016).</a>
+Third, it employs the likelihood ratio test to compare mutation rates,
+using the algorithms given in
+<a href='https://link.springer.com/article/10.1007/s10709-016-9904-3'>Zheng (2016)</a>. The LRT approach is superior to other
+existing methods when sample size is not very large.
+</pre>
+</article>
+
+</div>
+
+
+
+<table>
+
+<td color="red" ><b>Estimation</b><t/td>
+
+<tr> 
+<td>
+&nbsp &nbsp &nbsp 
+<a href=' {{ url_for('index_lc_basic') }} '>
+<img src='./static/button_LC.png' style='border:none;' width='175'> </a>
+</td>
+
+<td>
+&nbsp &nbsp &nbsp &nbsp 
+<a href=' {{ url_for('index_lc_plating') }} '>
+ <img src='./static/button_LC_plating.png' style='border:none;' width='175'> </a>
+ </td>
+
+<td> 
+&nbsp &nbsp &nbsp  &nbsp
+<a href='{{url_for('index_lc_Nt')}}'> 
+ <img src='./static/button_LC_Nt.png' style='border:none;' width='175'> </a>
+ </td>
+
+<td> 
+&nbsp &nbsp &nbsp &nbsp
+<a href='{{url_for('index_mk')}}'> 
+ <img src='./static/button_MK.png' style='border:none;' width='175'> </a>
+ </td>
+</tr>
+
+
+
+<tr> 
+<td color="red" ><b>Comparison</b><t/td>
+</tr>
+
+<tr>
+<td>
+&nbsp &nbsp &nbsp 
+<a href='{{url_for('index_compare_mk')}}'> 
+ <img src='./static/MK_compare.png' style='border:none;' width='175'> </a>
+ </td>
+
+<td> 
+&nbsp &nbsp &nbsp  &nbsp
+<a href='{{url_for('index_compare_lc_plating')}}'> 
+ <img src='./static/LC_plating_compare.png' style='border:none;' width='175'> </a>
+ </td>
+
+<td>
+&nbsp &nbsp &nbsp &nbsp
+<a href='{{url_for('index_fold_mk')}}'> 
+ <img src='./static/MK_foldchange.png' style='border:none;' width='175'> </a>
+ </td>
+
+<td>
+&nbsp &nbsp &nbsp &nbsp 
+<a href='{{url_for('index_fold_ld_plating')}}'> 
+ <img src='./static/LD_plating_foldchange.png' style='border:none;' width='175'> </a>
+ </td>
+
+
+</tr>
+</table>
+
+
+
+
+{% endblock %}
+   
+
+
+

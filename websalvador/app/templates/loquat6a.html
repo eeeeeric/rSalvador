@@ -1,0 +1,89 @@
+{% extends 'baseFig.html' %}
+
+
+{% block content %}
+
+   <h3>{% block title %} Lea-Coulson Model: basic estimation{% endblock %}</h3>
+
+ <p> Back to <a href='{{ url_for('index') }}'> <img src='./static/homepage.png', width=80>    </a> </p>
+
+
+<form method="POST">
+
+   <div>
+   <label>Estimated Nt:</label>
+    <input name="Nt" size='12' value={{given_Nt}}> 
+   </div>
+
+   <div>
+   <label>Initial m:</label>
+    <input name="init_m" size='12' value={{given_init_m}}> <br>
+
+   <label>Initial m lower limit:</label>
+    <input name="init_m_low" size='12' value={{given_init_m_low}}> <br>
+
+   <label>Initial m upper limit:</label>
+    <input name="init_m_up" size='12' value={{given_init_m_up}}>
+
+   </div>
+
+    <div>
+    <style> textarea{ vertical-align: middle;}</style>
+    <label>Mutant counts:</label>
+    <textarea name='mutantCount' rows='22' cols='50'>{{rawdata}}
+    </textarea>
+    </div>
+    <input type="submit" value="Send to rSalvador" style='background-color:lightgreen'></input>
+
+<!------------ Results Output ------------>
+
+
+   <div>
+   <label><b>Results</b></label>
+   <table border='1'>
+   <tr>
+    <td> quantity</td>
+    <td> point est</td>
+    <td> lower limit</td>
+    <td> upper limit</td>
+   </tr>
+
+   <tr>
+    <td style='text-align:center'> m</td>
+    <td> {{ est_m }} </td>
+    <td> {{ m_low }} </td>
+    <td> {{ m_up }}</td>
+   </tr>
+
+
+   <tr>
+    <td style='text-align:center'>  &#956 </td>
+    <td> {{ est_mu }} </td>
+    <td> {{ mu_low }} </td>
+    <td> {{ mu_up }}</td>
+   </tr>
+
+   </table>
+   </div>
+
+
+
+{% if warning == True %}
+
+<body>
+   <textarea cols='80' rows='4' style='background-color:orange; color:green'>
+rSalvador encountered computational hurdles. You may check raw data (they must
+be either zeros or positive integers), change initial values, or increase
+sample size (i.e., number of sister cultures).
+</textarea>
+</body>
+
+{% endif %}
+
+</form>
+
+{% endblock %}
+   
+
+
+

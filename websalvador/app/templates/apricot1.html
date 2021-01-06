@@ -1,0 +1,104 @@
+{% extends 'baseFig.html' %}
+
+
+<head>
+   <link rel='stylesheet' type='text/css' href= {{ url_for('static', filename='zheng_style.css') }} /'>
+</head>
+
+
+{% block content %}
+
+   <h3>{% block title %} Mandelbrot-Koch Model: mutation rate fold change{% endblock %}</h3>
+
+  <p> Back to <a href='{{ url_for('index') }}'> <img src='./static/homepage.png', width=80>    </a> </p> 
+
+<form method="POST">
+
+<table>
+<tr>
+<td>
+<div>
+   <label>Nt:</label>
+    <input name="Nt_1" size='6' value='2.5e7' >
+   <label>w<sub>1</sub>:</label>
+    <input name="w_1" size='6' value='1.0' >
+   </div>
+</td>
+
+<td>
+<div>
+   <label>Nt:</label>
+    <input name="Nt_2" size='6' value='2.5e7' >
+   <label>w<sub>2</sub>:</label>
+    <input name="w_2" size='6' value='1.0' >
+   </div>
+</td>
+<tr>
+
+
+<tr> <td> &nbsp &nbsp  <b>Experiment 1 Data</b></td> <td>&nbsp &nbsp   <b> Experiment 2 Data</b></td> </tr>
+
+<tr>
+<td>    <textarea name='mutantCount1' rows='22' cols='50'> 0 0  1  1 6  14 14  18 24 39 </textarea> </td>
+<td>    <textarea name='mutantCount2' rows='22' cols='50'> 3 9  6  14 14  18 24 89 </textarea> </td>
+</tr>
+
+<tr>
+<td colspan="2">
+
+ <div>
+   <label>Initial base:</label>
+    <input name="init_base" size='8' value='1e-5' >
+
+ &nbsp &nbsp  <label>Initial fold:</label>
+    <input name="init_fold" size='8' value='1.5' > <br>  <!-- initial guess row 1 -->
+
+   <label>Initial low base:</label> 
+    <input name="init_low_base" size='8' value='-9' > 
+
+   &nbsp &nbsp <label>Initial low fold:</label> 
+    <input name="init_low_fold" size='8' value='-9' > <br>  <!-- initial guess row 2 -->
+
+   <label>Initial up base:</label> 
+    <input name="init_up_base" size='8' value='-9' > 
+
+   &nbsp &nbsp <label>Initial up fold:</label> 
+    <input name="init_up_fold" size='8' value='-9' > <br>  <!-- initial guess row 3 -->
+   </div>
+
+</td>
+</tr>
+
+
+</table>
+
+    <input type="submit" value="Send to rSalvador" style='background-color:lightgreen'></input>
+
+<!------------ Results Output ------------>
+
+   <div>
+   <label> <b>Results</b> </label>
+   <table border='1'>
+   <tr>
+    <td> fold change</td>
+    <td> lower limit</td>
+    <td> upper limit</td>
+   </tr>
+
+   <tr>
+    <td> {{ fold_est }} </td>
+    <td> {{ fold_ci_low }} </td>
+    <td> {{ fold_ci_up }} </td>
+   </tr>
+
+
+   </table>
+   </div>
+
+</form>
+
+{% endblock %}
+   
+
+
+
