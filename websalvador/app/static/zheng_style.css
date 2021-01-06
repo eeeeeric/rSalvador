@@ -1,0 +1,27 @@
+
+hr {
+color : green;
+background-color: navy
+height :32px;
+width : 64%;
+}
+
+h3 {
+color : olive;
+font-size : 16px;
+}
+
+article {
+width: 885px;
+text-align: left;
+}
+
+textarea {
+background-color:#e3e4fa;
+padding: 6px;
+border: 2px solid #ccffff;
+margin-left: 2px;
+margin-right: 2px;
+}
+
+

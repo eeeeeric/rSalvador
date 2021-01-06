@@ -9,7 +9,7 @@
     "flask": {
       "type": "python 3",
       "path": "/rSalvador/app/",
-      "module": "app",
+      "module": "overview",
       "callable": "app",
       "protocol": "wsgi",
       "threads": 10

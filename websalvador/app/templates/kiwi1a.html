@@ -1,0 +1,108 @@
+{% extends 'baseFig.html' %}
+
+<head> 
+   <link rel='stylesheet' type='text/css/ href= {{ url_for('static', filename='zheng_style.css') }} /'>
+</head
+
+
+{% block content %}
+
+   <h3>{% block title %} Mandelbrot-Koch Model: comparison of mutation rates{% endblock %}</h3>
+
+  <p> Back to <a href='{{ url_for('index') }}'> <img src='./static/homepage.png', width=80>    </a> </p> 
+
+<form method="POST">
+
+<table>
+<tr>
+<td>
+<div>
+   <label>Nt:</label>
+    <input name="Nt_1" size='6' value={{given_Nt_1}}>
+   <label>w<sub>1</sub>:</label>
+    <input name="w_1" size='6' value={{given_w_1}}>
+   </div>
+</td>
+
+<td>
+<div>
+   <label>Nt:</label>
+    <input name="Nt_2" size='6' value={{given_Nt_2}}>
+   <label>w<sub>2</sub>:</label>
+    <input name="w_2" size='6' value={{given_w_2}}>
+   </div>
+</td>
+<tr>
+
+
+<tr> <td> &nbsp &nbsp  <b>Experiment 1 Data</b></td> <td>&nbsp &nbsp   <b> Experiment 2 Data</b></td> </tr>
+
+<tr>
+<td>    <textarea name='mutantCount1' rows='22' cols='50'>{{given_x1}}</textarea> </td>
+<td>    <textarea name='mutantCount2' rows='22' cols='50'>{{given_x2}}</textarea> </td>
+</tr>
+
+<tr>
+<td>
+
+ <div>
+   <label>Initial m<sub>1</sub>:</label>
+    <input name="init_m1" size='8' value={{given_init_m1}}> <br>
+
+   <label>Initial m<sub>2</sub>:</label> 
+    <input name="init_m2" size='8' value={{given_init_m2}}> <br>
+
+   <label>Initial m<sub>c</sub>:</label> 
+    <input name="init_mc" size='8' value={{given_init_mc}}>
+   </div>
+
+</td>
+</tr>
+
+
+</table>
+
+    <input type="submit" value="Send to rSalvador" style='background-color:lightgreen'></input>
+
+<!------------ Results Output ------------>
+
+   <div>
+   <label> <b>Results</b> </label>
+   <table border='1'>
+   <tr>
+    <td> LRT statistic</td>
+    <td>P value</td>
+   </tr>
+
+   <tr>
+    <td>{{ lrt_stat }}</td>
+    <td>{{ p_value }}</td>
+   </tr>
+
+   </table>
+   </div>
+
+
+
+{% if warning == True %}
+
+<body>
+   <textarea cols='80' rows='4' style='background-color:orange; color:green'>
+rSalvador encountered computational hurdles. You may check raw data (they must
+be either zeros or positive integers), change initial values, or increase
+sample size (i.e., number of sister cultures).
+</textarea>
+</body>
+
+{% endif %}
+
+
+
+
+</form>
+
+{% endblock %}
+   
+
+
+

@@ -3,7 +3,11 @@
 
 {% block content %}
 
-   <h3>{% block title %} Lea-Coulson Model: basic estimation{% endblock %}</h3>
+   <h3>{% block title %}
+
+Mandelbrot-Koch Model: fitness w is known{% endblock %}</h3>
+
+ <p> Back to <a href='{{ url_for('index') }}'> <img src='./static/homepage.png', width=80>    </a> </p>
 
 
 <form method="POST">
@@ -11,11 +15,26 @@
    <div>
    <label>Estimated Nt:</label>
     <input name="Nt" size='12' value={{given_Nt}}> 
+
+   <label>Estimated w:</label>
+    <input name="w" size='12' value={{given_w}} >
+
+
    </div>
 
    <div>
    <label>Initial m:</label>
-    <input name="init_m" size='12' value={{given_init_m}} >
+    <input name="init_m" size='12' value={{given_init_m}}> <br>
+
+   <label>Initial m lower limit:</label>
+    <input name="init_m_low" size='12' value={{given_init_m_low}}> <br>
+
+   <label>Initial m upper limit:</label>
+    <input name="init_m_up" size='12' value={{given_init_m_up}}>
+
+
+
+
    </div>
 
     <div>
@@ -24,13 +43,13 @@
     <textarea name='mutantCount' rows='22' cols='50'>{{rawdata}}
     </textarea>
     </div>
-    <input type="submit" value="Send to rSalvador"></input>
+    <input type="submit" value="Send to rSalvador" style='background-color:lightgreen'></input>
 
 <!------------ Results Output ------------>
 
 
    <div>
-   <label> Results </label>
+   <label><b>Results</b></label>
    <table border='1'>
    <tr>
     <td> quantity</td>
@@ -63,8 +82,9 @@
 
 <body>
    <textarea cols='80' rows='4' style='background-color:orange; color:green'>
-rSalvador encountered computational hurdles. You may check raw data, change
-inivial values, or increase sample size (number of cultures).
+rSalvador encountered computational hurdles. You may check raw data (they must
+be either zeros or positive integers), change initial values, or increase
+sample size (i.e., number of sister cultures).
 </textarea>
 </body>
 
