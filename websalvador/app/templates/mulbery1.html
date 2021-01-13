@@ -3,7 +3,7 @@
 
 {% block content %}
 
-   <h3>{% block title %} Lea-Coulson Model: assuming an incompleting plating efficiency &#949{% endblock %}</h3>
+   <h3>{% block title %}Lea-Coulson Model (&#949 < 1){% endblock %}</h3>
 
   <p> Back to <a href='{{ url_for('index') }}'> <img src='./static/homepage.png', width=80>    </a> </p> 
 
@@ -28,9 +28,9 @@
    </div>
 
     <div>
-    <style> textarea{ vertical-align: middle;}</style>
+    <style> textarea{vertical-align: middle;}</style>
     <label>Mutant counts:</label>
-    <textarea name='mutantCount' rows='22' cols='50'> 0 0  1  1 6  14 14  18 24 39 </textarea>
+    <textarea name='mutantCount' rows='10' cols='50'> 0 0  1  1 6  14 14  18 24 39 </textarea>
     </div>
     <input type="submit" value="Send to rSalvador" style='background-color:lightgreen'></input>
 
