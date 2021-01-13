@@ -10,7 +10,7 @@
 {% block content %}
 
    <h3>{% block title %} 
-Lea-Coulson Model: assuming a varying Nt with a coefficient of variation of cv{% endblock %}</h3>
+Lea-Coulson Model with N<sub>t</sub> varying{% endblock %}</h3>
 
   <p> Back to <a href='{{ url_for('index') }}'> <img src='./static/homepage.png', width=80>    </a> </p> 
 
@@ -35,9 +35,9 @@ Lea-Coulson Model: assuming a varying Nt with a coefficient of variation of cv{%
    </div>
 
     <div>
-    <style> textarea{ vertical-align: middle;}</style>
+    <style> textarea{vertical-align: middle;}</style>
     <label>Mutant counts:</label>
-    <textarea name='mutantCount' rows='22' cols='50'> 0 0  1  1 6  14 14  18 24 39 </textarea>
+    <textarea name='mutantCount' rows='10' cols='50'> 0 0  1  1 6  14 14  18 24 39 </textarea>
     </div>
     <input type="submit" value="Send to rSalvador" style='background-color:lightgreen'></input>
 
