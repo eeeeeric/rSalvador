@@ -5,7 +5,7 @@ Technical details are given in [Zheng (2017)](https://github.com/eeeeeric/rSalva
 
 webSalvador
 -----------
-📣 For those who prefer the convenience of a web tool, webSalvador is a new app powered by rSalvador: https://websalvador.eeeeeric.com/
+📣 For those who prefer the convenience of a web tool, webSalvador is a new app powered by rSalvador: [➡️ webSalvador](https://websalvador.eeeeeric.com)
 
 Installation and Usage
 ----------------------
