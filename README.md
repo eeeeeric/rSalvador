@@ -3,6 +3,8 @@ rSalvador
 
 rSalvador: An R Tool for the Luria-Delbruck Fluctuation Assay
 
+📣 For those who prefer the convenience of a web tool, webSalvador is a new app powered by rSalvador: https://websalvador.eeeeeric.com/
+
 Installing from GitHub
 ----------------------
 
