@@ -9,3 +9,5 @@ To run it locally:
 docker run -d -p 8080:80 eeeeeric/rsalvador-websalvador
 ```
 and navigate to [http://localhost:8080/](http://localhost:8080/)
+
+A [PDF manual](./manual.pdf) is also available.
