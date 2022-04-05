@@ -35,6 +35,16 @@ For Python 3 users
 ------------------
 Some frequently used rSalvador functions are also available in pySalvador for Python users ([source](https://github.com/eeeeeric/rSalvador/blob/master/pysalvador/pysalvador.py), [Jupyter manual](https://github.com/eeeeeric/rSalvador/blob/master/pysalvador/userManual.ipynb)).
 
+Estimating rates of non-neutral mutations
+-----------------------------------------
+
+- [confint.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/confint.py)
+- [kessler.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/kessler.py)
+- [meander.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/meander.py)
+- [naive.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/naive.py)
+- [simuKessler.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/simuKessler.py)
+- [stable_likely.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/stable_likely.py)
+
 Author
 ------
 Qi Zheng
