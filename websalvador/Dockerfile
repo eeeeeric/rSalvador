@@ -40,7 +40,6 @@ RUN R --vanilla -e "install.packages('gdata', repos='http://cran.us.r-project.or
 RUN mkdir rSalvador
 WORKDIR rSalvador
 ENV RSALVADOR_VERSION=1.9
-RUN apt-get install -y wget
 RUN wget https://github.com/eeeeeric/rSalvador/releases/download/v1.9/rsalvador_1.9_R_x86_64-pc-linux-gnu.tar.gz
 RUN R CMD INSTALL rsalvador_1.9_R_x86_64-pc-linux-gnu.tar.gz
 
