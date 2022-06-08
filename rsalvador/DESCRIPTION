@@ -1,6 +1,6 @@
 Package: rsalvador
-Version: 1.8
-Date: 2020-11-26
+Version: 1.9
+Date: 2021-02-12
 Title: rSalvador: An R Tool for the Luria-Delbruck Fluctuation Assay
 Author: Qi Zheng <qzheng@tamu.edu>
 Maintainer: Qi Zheng <qzheng@tamu.edu>
