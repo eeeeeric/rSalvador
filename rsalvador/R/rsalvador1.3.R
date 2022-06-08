@@ -399,6 +399,8 @@ eta=rep(0,n)
 
 eta[1]=-1-log(e)/(1-e)
 
+if (n == 1) return( c(log(e), eta[1]) ) ### added February 12, 2021 for this rare special case
+
 for (i in 1:(n-1) ) {
 
 eta[i+1]=-odds*eta[i]+1/i/(i+1)
@@ -418,6 +420,8 @@ revOR=(1-e)/e
 eta=rep(0,n)
 
 eta[n]=( (1-e)/n/(n+1) ) * Re( hypergeo(1,2,n+2,1-e) )
+
+if (n == 1) return( c(log(e), eta[1]) ) ### added February 12, 2021 for this rare special case
 
 for (i in (n-1):1 ) {
 
