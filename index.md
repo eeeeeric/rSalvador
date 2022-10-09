@@ -45,7 +45,20 @@ Estimating rates of non-neutral mutations
 - [meander.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/meander.py)
 - [naive.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/naive.py)
 
+A special type of the Luria-Delbruck distribution
+-------------------------------------------------
 
+- [bruno.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/special/bruno.py)
+- [cauchy.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/special/cauchy.py)
+- [example_compare.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/special/example_compare.py)
+- [example1.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/special/example1.py)
+- [example2.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/special/example2.py)
+- [gasch_confint.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/special/gasch_confint.py)
+- [gasch_likely.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/special/gasch_likely.py)
+- [gasch_testing.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/special/gasch_testing.py)
+- [levine.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/special/levine.py)
+- [limiting.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/special/limiting.py)
+- [simplest.py](https://github.com/eeeeeric/rSalvador/blob/master/python-examples/special/simplest.py)
 
 Author
 ------
